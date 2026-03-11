@@ -262,6 +262,82 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  /* ------------------------------------------
+     2.12 Password strength indicator (register page)
+  ------------------------------------------ */
+  document.querySelectorAll('input[type="password"]').forEach(input => {
+    input.addEventListener('input', function () {
+      const bar = document.getElementById(`strength-${this.name}`);
+      if (!bar) return;
+
+      const val = this.value;
+      let strength = 0;
+      if (val.length >= 8)                                          strength += 33;
+      if (val.match(/[a-z]/) && val.match(/[A-Z]/))                strength += 33;
+      if (val.match(/[0-9]/) && val.match(/[^a-zA-Z0-9]/))        strength += 34;
+
+      bar.style.width = strength + '%';
+      bar.className = 'auth-strength-bar';
+
+      if      (strength < 33) bar.classList.add('strength-weak');
+      else if (strength < 66) bar.classList.add('strength-medium');
+      else                    bar.classList.add('strength-strong');
+    });
+  });
+
+  /* ------------------------------------------
+     2.13 Tabbed login interface
+  ------------------------------------------ */
+  function switchTab(tab) {
+      const userBtn = document.getElementById('userTabBtn');
+      const adminBtn = document.getElementById('adminTabBtn');
+      const userForm = document.getElementById('userLoginForm');
+      const adminForm = document.getElementById('adminLoginForm');
+      
+      if (!userBtn || !adminBtn || !userForm || !adminForm) return;
+      
+      if (tab === 'user') {
+          userBtn.classList.add('active');
+          adminBtn.classList.remove('active');
+          userForm.style.display = 'block';
+          adminForm.style.display = 'none';
+          userForm.classList.add('fade-in');
+      } else {
+          adminBtn.classList.add('active');
+          userBtn.classList.remove('active');
+          adminForm.style.display = 'block';
+          userForm.style.display = 'none';
+          adminForm.classList.add('fade-in');
+      }
+  }
+
+  // Attach tab switching to global scope
+  window.switchTab = switchTab;
+
+  // Handle user login form submission
+  const userLoginForm = document.getElementById('userLoginForm');
+  if (userLoginForm) {
+      userLoginForm.addEventListener('submit', function(e) {
+          const btn = document.getElementById('userSubmitBtn');
+          if (btn) {
+              btn.classList.add('loading');
+              btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Signing in...';
+          }
+      });
+  }
+
+  // Handle admin login form submission
+  const adminLoginForm = document.getElementById('adminLoginForm');
+  if (adminLoginForm) {
+      adminLoginForm.addEventListener('submit', function(e) {
+          const btn = document.getElementById('adminSubmitBtn');
+          if (btn) {
+              btn.classList.add('loading');
+              btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Accessing admin...';
+          }
+      });
+  }
+
 });
 
 /* ============================================
@@ -309,31 +385,3 @@ if (expenseCanvas) {
     });
   }
 }
-
-/* ============================================
-   ADD THESE TO main.js — Section 2.11
-   Paste after the existing loginForm handler
-   ============================================ */
-
-  /* ------------------------------------------
-     Password strength indicator (register page)
-  ------------------------------------------ */
-  document.querySelectorAll('input[type="password"]').forEach(input => {
-    input.addEventListener('input', function () {
-      const bar = document.getElementById(`strength-${this.name}`);
-      if (!bar) return;
-
-      const val = this.value;
-      let strength = 0;
-      if (val.length >= 8)                                          strength += 33;
-      if (val.match(/[a-z]/) && val.match(/[A-Z]/))                strength += 33;
-      if (val.match(/[0-9]/) && val.match(/[^a-zA-Z0-9]/))        strength += 34;
-
-      bar.style.width = strength + '%';
-      bar.className = 'auth-strength-bar';
-
-      if      (strength < 33) bar.classList.add('strength-weak');
-      else if (strength < 66) bar.classList.add('strength-medium');
-      else                    bar.classList.add('strength-strong');
-    });
-  });

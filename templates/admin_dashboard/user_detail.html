@@ -1,251 +1,194 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}User Details — {{ viewed_user.username }}{% endblock %}
+{% block title %}User Details - {{ viewed_user.username }}{% endblock %}
+
 {% block page_title %}User: {{ viewed_user.get_full_name|default:viewed_user.username }}{% endblock %}
 
 {% block content %}
-
-<!-- ══════════════════════════════════════
-     USER HEADER BANNER
-══════════════════════════════════════ -->
-<div class="welcome-banner mb-4" style="background: linear-gradient(135deg, #0d4a45 0%, #0d9488 100%);">
-    <div class="row align-items-center">
-        <div class="col-md-8">
-            <h5 class="welcome-title">
-                <i class="fas fa-user-circle me-2"></i>
-                {{ viewed_user.get_full_name|default:viewed_user.username }}
-            </h5>
-            <p class="welcome-sub mb-0">
-                <span class="me-3">
-                    <i class="fas fa-envelope me-1"></i>
-                    {{ viewed_user.email|default:"No email set" }}
-                </span>
-                <span>
-                    <i class="fas fa-calendar me-1"></i>
-                    Joined: {{ viewed_user.date_joined|date:"M d, Y" }}
-                </span>
+<!-- User Header -->
+<div class="welcome-banner mb-4" style="background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal-primary) 100%);">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2>{{ viewed_user.get_full_name|default:viewed_user.username }}</h2>
+            <p class="mb-0 opacity-75">
+                <i class="fas fa-envelope me-2"></i>{{ viewed_user.email }}<br>
+                <i class="fas fa-calendar-alt me-2"></i>Joined {{ viewed_user.date_joined|date:"F j, Y" }}
+                {% if viewed_user.last_login %}
+                • Last login {{ viewed_user.last_login|date:"M j, Y" }}
+                {% endif %}
             </p>
         </div>
-        <div class="col-md-4 text-end">
-            <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm me-2">
-                <i class="fas fa-arrow-left me-1"></i> Back
-            </a>
-            <a href="/admin/auth/user/{{ viewed_user.id }}/change/" class="btn btn-light btn-sm">
-                <i class="fas fa-edit me-1"></i> Edit in Admin
-            </a>
+        <div class="text-end">
+            <span class="badge" style="background: rgba(255,255,255,0.2); padding: 8px 16px; font-size: 0.9rem;">
+                <i class="fas fa-shield-alt me-2"></i>
+                {% if viewed_user.is_superuser %}Superuser{% elif viewed_user.is_staff %}Staff{% else %}Regular User{% endif %}
+            </span>
         </div>
     </div>
 </div>
-<!-- /USER HEADER BANNER -->
 
-<!-- ══════════════════════════════════════
-     USER STAT CARDS
-══════════════════════════════════════ -->
+<!-- Stats Cards -->
 <div class="row g-3 mb-4">
-
     <div class="col-md-3">
         <div class="stat-mini income">
-            <div class="stat-mini-left">
-                <div class="stat-mini-icon"><i class="fas fa-arrow-circle-down"></i></div>
+            <div class="stat-mini-icon">
+                <i class="fas fa-arrow-up"></i>
             </div>
-            <div class="stat-mini-right">
-                <div class="stat-mini-label">Total Income</div>
-                <div class="stat-mini-value">Ksh {{ income_total|floatformat:2 }}</div>
+            <div class="stat-mini-content">
+                <span class="stat-mini-label">Total Income</span>
+                <span class="stat-mini-value">Ksh {{ income_total|floatformat:0 }}</span>
             </div>
         </div>
     </div>
-
+    
     <div class="col-md-3">
         <div class="stat-mini expense">
-            <div class="stat-mini-left">
-                <div class="stat-mini-icon"><i class="fas fa-arrow-circle-up"></i></div>
+            <div class="stat-mini-icon">
+                <i class="fas fa-arrow-down"></i>
             </div>
-            <div class="stat-mini-right">
-                <div class="stat-mini-label">Total Expenses</div>
-                <div class="stat-mini-value">Ksh {{ expense_total|floatformat:2 }}</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="stat-mini balance">
-            <div class="stat-mini-left">
-                <div class="stat-mini-icon"><i class="fas fa-wallet"></i></div>
-            </div>
-            <div class="stat-mini-right">
-                <div class="stat-mini-label">Balance</div>
-                <div class="stat-mini-value">Ksh {{ balance|floatformat:2 }}</div>
+            <div class="stat-mini-content">
+                <span class="stat-mini-label">Total Expenses</span>
+                <span class="stat-mini-value">Ksh {{ expense_total|floatformat:0 }}</span>
             </div>
         </div>
     </div>
-
+    
     <div class="col-md-3">
         <div class="stat-mini savings">
-            <div class="stat-mini-left">
-                <div class="stat-mini-icon"><i class="fas fa-piggy-bank"></i></div>
+            <div class="stat-mini-icon">
+                <i class="fas fa-wallet"></i>
             </div>
-            <div class="stat-mini-right">
-                <div class="stat-mini-label">Savings Goals</div>
-                <div class="stat-mini-value">{{ goals|length }}</div>
-            </div>
-        </div>
-    </div>
-
-</div>
-<!-- /USER STAT CARDS -->
-
-<!-- ══════════════════════════════════════
-     RECENT TRANSACTIONS
-══════════════════════════════════════ -->
-<div class="row g-3 mb-4">
-
-    <!-- Recent income -->
-    <div class="col-md-6">
-        <div class="dash-card">
-            <div class="dash-card-header">
-                <div class="dash-card-title">
-                    <div class="dash-card-icon"><i class="fas fa-arrow-circle-down"></i></div>
-                    <span>Recent Income</span>
-                </div>
-            </div>
-
-            {% for income in recent_income %}
-            <div class="txn-item">
-                <div>
-                    <div class="txn-title">{{ income.title }}</div>
-                    <div class="txn-meta">{{ income.date }} &middot; {{ income.get_category_display }}</div>
-                </div>
-                <span class="txn-amount text-income">+Ksh {{ income.amount|floatformat:2 }}</span>
-            </div>
-            {% empty %}
-            <div class="empty-state">
-                <i class="fas fa-arrow-circle-down"></i>
-                <p class="text-muted">No income records</p>
-            </div>
-            {% endfor %}
-
-        </div>
-    </div>
-
-    <!-- Recent expenses -->
-    <div class="col-md-6">
-        <div class="dash-card">
-            <div class="dash-card-header">
-                <div class="dash-card-title">
-                    <div class="dash-card-icon"><i class="fas fa-arrow-circle-up"></i></div>
-                    <span>Recent Expenses</span>
-                </div>
-            </div>
-
-            {% for expense in recent_expenses %}
-            <div class="txn-item">
-                <div>
-                    <div class="txn-title">{{ expense.title }}</div>
-                    <div class="txn-meta">{{ expense.date }} &middot; {{ expense.get_category_display }}</div>
-                </div>
-                <span class="txn-amount text-expense">-Ksh {{ expense.amount|floatformat:2 }}</span>
-            </div>
-            {% empty %}
-            <div class="empty-state">
-                <i class="fas fa-arrow-circle-up"></i>
-                <p class="text-muted">No expense records</p>
-            </div>
-            {% endfor %}
-
-        </div>
-    </div>
-
-</div>
-<!-- /RECENT TRANSACTIONS -->
-
-<!-- ══════════════════════════════════════
-     BUDGETS & SAVINGS GOALS
-══════════════════════════════════════ -->
-<div class="row g-3">
-
-    <!-- Budgets -->
-    <div class="col-md-6">
-        <div class="dash-card">
-            <div class="dash-card-header">
-                <div class="dash-card-title">
-                    <div class="dash-card-icon"><i class="fas fa-chart-pie"></i></div>
-                    <span>Budgets</span>
-                </div>
-                <span class="dash-badge">{{ budgets|length }} total</span>
-            </div>
-
-            {% for budget in budgets %}
-            {% widthratio budget.spent budget.amount 100 as pct %}
-            <div class="txn-item">
-                <div style="flex: 1;">
-                    <div class="txn-title">{{ budget.category }}</div>
-                    <div class="txn-meta">
-                        Ksh {{ budget.spent|floatformat:0 }} / {{ budget.amount|floatformat:0 }}
-                        &middot; {{ budget.month }}/{{ budget.year }}
-                    </div>
-                    <div class="progress mt-1" style="height: 5px; border-radius: 3px;">
-                        <div class="progress-bar
-                            {% if pct >= 90 %}bg-danger
-                            {% elif pct >= 70 %}bg-warning
-                            {% else %}bg-success{% endif %}"
-                            style="width: {{ pct }}%">
-                        </div>
-                    </div>
-                </div>
-                <span class="ms-3 fw-bold
-                    {% if pct >= 90 %}text-danger
-                    {% elif pct >= 70 %}text-warning
-                    {% else %}text-success{% endif %}">
-                    {{ pct }}%
+            <div class="stat-mini-content">
+                <span class="stat-mini-label">Balance</span>
+                <span class="stat-mini-value {% if balance >= 0 %}text-teal{% else %}text-danger{% endif %}">
+                    Ksh {{ balance|floatformat:0 }}
                 </span>
             </div>
-            {% empty %}
-            <div class="empty-state">
-                <i class="fas fa-chart-pie"></i>
-                <p class="text-muted">No budgets set</p>
-            </div>
-            {% endfor %}
-
         </div>
     </div>
-
-    <!-- Savings goals -->
-    <div class="col-md-6">
-        <div class="dash-card">
-            <div class="dash-card-header">
-                <div class="dash-card-title">
-                    <div class="dash-card-icon"><i class="fas fa-piggy-bank"></i></div>
-                    <span>Savings Goals</span>
-                </div>
-                <span class="dash-badge">{{ goals|length }} total</span>
-            </div>
-
-            {% for goal in goals %}
-            {% widthratio goal.current_amount goal.target_amount 100 as gpct %}
-            <div class="txn-item">
-                <div style="flex: 1;">
-                    <div class="txn-title">{{ goal.title }}</div>
-                    <div class="txn-meta">
-                        Ksh {{ goal.current_amount|floatformat:0 }} / {{ goal.target_amount|floatformat:0 }}
-                    </div>
-                    <div class="progress mt-1" style="height: 5px; border-radius: 3px;">
-                        <div class="progress-bar" style="width: {{ gpct }}%; background: var(--primary);"></div>
-                    </div>
-                </div>
-                <span class="ms-3 fw-bold" style="color: var(--primary);">{{ gpct }}%</span>
-            </div>
-            {% empty %}
-            <div class="empty-state">
+    
+    <div class="col-md-3">
+        <div class="stat-mini budget">
+            <div class="stat-mini-icon">
                 <i class="fas fa-piggy-bank"></i>
-                <p class="text-muted">No savings goals</p>
             </div>
-            {% endfor %}
-
+            <div class="stat-mini-content">
+                <span class="stat-mini-label">Savings Goals</span>
+                <span class="stat-mini-value">{{ goals.count }}</span>
+            </div>
         </div>
     </div>
-
 </div>
-<!-- /BUDGETS & SAVINGS GOALS -->
 
+<!-- Recent Transactions -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Income</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for inc in recent_income %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ inc.source }}</strong>
+                            <small class="text-muted d-block">{{ inc.date|date:"M d, Y" }}</small>
+                        </div>
+                        <span class="text-teal fw-bold">Ksh {{ inc.amount|floatformat:2 }}</span>
+                    </div>
+                    {% empty %}
+                    <div class="list-group-item text-muted">No income records</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Expenses</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for exp in recent_expenses %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ exp.category }}</strong>
+                            <small class="text-muted d-block">{{ exp.date|date:"M d, Y" }} • {{ exp.description|truncatechars:30 }}</small>
+                        </div>
+                        <span class="text-danger fw-bold">Ksh {{ exp.amount|floatformat:2 }}</span>
+                    </div>
+                    {% empty %}
+                    <div class="list-group-item text-muted">No expense records</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Budgets & Goals -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">User Budgets</h5>
+            </div>
+            <div class="card-body">
+                {% for budget in budgets %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>{{ budget.category }} - {{ budget.get_month_display }} {{ budget.year }}</span>
+                        <span class="text-muted small">
+                            Ksh {{ budget.spent|floatformat:0 }} / Ksh {{ budget.amount|floatformat:0 }}
+                        </span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        {% widthratio budget.spent budget.amount 100 as percentage %}
+                        <div class="progress-bar bg-teal" style="width: {{ percentage }}%"></div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted mb-0">No budgets set</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Savings Goals</h5>
+            </div>
+            <div class="card-body">
+                {% for goal in goals %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>{{ goal.name }}</span>
+                        <span class="text-muted small">
+                            Ksh {{ goal.current_amount|floatformat:0 }} / Ksh {{ goal.target_amount|floatformat:0 }}
+                        </span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        {% widthratio goal.current_amount goal.target_amount 100 as percentage %}
+                        <div class="progress-bar bg-teal" style="width: {{ percentage }}%"></div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted mb-0">No savings goals</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Back Button -->
+<div class="mt-4">
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-teal">
+        <i class="fas fa-arrow-left me-2"></i>Back to Admin Dashboard
+    </a>
+</div>
 {% endblock %}

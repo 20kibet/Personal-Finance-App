@@ -2,271 +2,206 @@
 {% load static %}
 
 {% block title %}Admin Dashboard{% endblock %}
+
 {% block page_title %}Admin Dashboard{% endblock %}
 
 {% block content %}
-
-<!-- ══════════════════════════════════════
-     STAT CARDS
-══════════════════════════════════════ -->
+<!-- Stats Cards -->
 <div class="row g-3 mb-4">
-
     <div class="col-md-3">
         <div class="stat-mini income">
-            <div class="stat-mini-left">
-                <div class="stat-mini-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-mini-icon">
+                <i class="fas fa-users"></i>
             </div>
-            <div class="stat-mini-right">
-                <div class="stat-mini-label">Total Users</div>
-                <div class="stat-mini-value">{{ total_users }}</div>
-                <div class="stat-mini-sub">{{ new_users_today }} new today</div>
+            <div class="stat-mini-content">
+                <span class="stat-mini-label">Total Users</span>
+                <span class="stat-mini-value">{{ total_users }}</span>
+                <span class="stat-mini-trend positive">
+                    <i class="fas fa-arrow-up"></i> {{ new_users_today }} today
+                </span>
             </div>
         </div>
     </div>
-
+    
     <div class="col-md-3">
         <div class="stat-mini expense">
-            <div class="stat-mini-left">
-                <div class="stat-mini-icon"><i class="fas fa-coins"></i></div>
+            <div class="stat-mini-icon">
+                <i class="fas fa-dollar-sign"></i>
             </div>
-            <div class="stat-mini-right">
-                <div class="stat-mini-label">Platform Balance</div>
-                <div class="stat-mini-value">Ksh {{ platform_balance|floatformat:2 }}</div>
-                <div class="stat-mini-sub">Across all users</div>
+            <div class="stat-mini-content">
+                <span class="stat-mini-label">Platform Balance</span>
+                <span class="stat-mini-value">Ksh {{ platform_balance|floatformat:0 }}</span>
+                <span class="stat-mini-trend">
+                    <i class="fas fa-exchange-alt"></i> Ksh {{ total_income|floatformat:0 }} / Ksh {{ total_expenses|floatformat:0 }}
+                </span>
             </div>
         </div>
     </div>
-
+    
     <div class="col-md-3">
-        <div class="stat-mini balance">
-            <div class="stat-mini-left">
-                <div class="stat-mini-icon"><i class="fas fa-chart-line"></i></div>
+        <div class="stat-mini budget">
+            <div class="stat-mini-icon">
+                <i class="fas fa-chart-pie"></i>
             </div>
-            <div class="stat-mini-right">
-                <div class="stat-mini-label">Total Income</div>
-                <div class="stat-mini-value">Ksh {{ total_income|floatformat:2 }}</div>
-                <div class="stat-mini-sub">All time</div>
+            <div class="stat-mini-content">
+                <span class="stat-mini-label">Budgets</span>
+                <span class="stat-mini-value">{{ total_budgets }}</span>
+                <span class="stat-mini-trend positive">
+                    <i class="fas fa-check-circle"></i> {{ active_budgets }} active
+                </span>
             </div>
         </div>
     </div>
-
+    
     <div class="col-md-3">
         <div class="stat-mini savings">
-            <div class="stat-mini-left">
-                <div class="stat-mini-icon"><i class="fas fa-wallet"></i></div>
+            <div class="stat-mini-icon">
+                <i class="fas fa-piggy-bank"></i>
             </div>
-            <div class="stat-mini-right">
-                <div class="stat-mini-label">Total Expenses</div>
-                <div class="stat-mini-value">Ksh {{ total_expenses|floatformat:2 }}</div>
-                <div class="stat-mini-sub">All time</div>
+            <div class="stat-mini-content">
+                <span class="stat-mini-label">Savings Goals</span>
+                <span class="stat-mini-value">{{ total_goals }}</span>
+                <span class="stat-mini-trend positive">
+                    <i class="fas fa-trophy"></i> {{ completed_goals }} completed
+                </span>
             </div>
         </div>
     </div>
-
 </div>
-<!-- /STAT CARDS -->
 
-<!-- ══════════════════════════════════════
-     CHARTS ROW
-══════════════════════════════════════ -->
-<div class="row g-3 mb-4">
-
-    <!-- Signup chart -->
-    <div class="col-md-6">
-        <div class="dash-card">
-            <div class="dash-card-header">
-                <div class="dash-card-title">
-                    <div class="dash-card-icon"><i class="fas fa-chart-line"></i></div>
-                    <span>User Signups (Last 6 Months)</span>
-                </div>
-                <span class="dash-badge">Growth</span>
+<!-- Charts Row -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">User Signups (Last 6 Months)</h5>
             </div>
-            <canvas id="signupChart"
-                    height="200"
-                    data-months="{{ signup_months|join:',' }}"
-                    data-counts="{{ signup_counts|join:',' }}">
-            </canvas>
+            <div class="card-body">
+                <canvas id="signupChart"
+                        data-months='{{ signup_months|safe }}'
+                        data-counts='{{ signup_counts|safe }}'
+                        style="height: 300px;"></canvas>
+            </div>
         </div>
     </div>
-
-    <!-- Platform overview -->
-    <div class="col-md-6">
-        <div class="dash-card">
-            <div class="dash-card-header">
-                <div class="dash-card-title">
-                    <div class="dash-card-icon"><i class="fas fa-th-large"></i></div>
-                    <span>Platform Overview</span>
-                </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Quick Stats</h5>
             </div>
-            <div class="row g-2 text-center py-2">
-                <div class="col-6">
-                    <div class="p-3 rounded" style="background: rgba(13,148,136,0.07);">
-                        <div class="fw-bold" style="color: var(--primary); font-size: 1.5rem;">{{ total_budgets }}</div>
-                        <small class="text-muted">Total Budgets</small>
+            <div class="card-body">
+                <div class="quick-stats">
+                    <div class="quick-stat-item">
+                        <span class="quick-stat-label">Active Users</span>
+                        <span class="quick-stat-value">{{ active_users }}</span>
                     </div>
-                </div>
-                <div class="col-6">
-                    <div class="p-3 rounded" style="background: rgba(5,150,105,0.07);">
-                        <div class="fw-bold text-success" style="font-size: 1.5rem;">{{ active_budgets }}</div>
-                        <small class="text-muted">Active This Month</small>
+                    <div class="quick-stat-item">
+                        <span class="quick-stat-label">Total Income</span>
+                        <span class="quick-stat-value text-teal">Ksh {{ total_income|floatformat:0 }}</span>
                     </div>
-                </div>
-                <div class="col-6">
-                    <div class="p-3 rounded" style="background: rgba(13,148,136,0.07);">
-                        <div class="fw-bold" style="color: var(--primary); font-size: 1.5rem;">{{ total_goals }}</div>
-                        <small class="text-muted">Savings Goals</small>
+                    <div class="quick-stat-item">
+                        <span class="quick-stat-label">Total Expenses</span>
+                        <span class="quick-stat-value text-amber">Ksh {{ total_expenses|floatformat:0 }}</span>
                     </div>
-                </div>
-                <div class="col-6">
-                    <div class="p-3 rounded" style="background: rgba(5,150,105,0.07);">
-                        <div class="fw-bold text-success" style="font-size: 1.5rem;">{{ completed_goals }}</div>
-                        <small class="text-muted">Completed</small>
+                    <div class="quick-stat-item">
+                        <span class="quick-stat-label">Completed Goals</span>
+                        <span class="quick-stat-value text-teal">{{ completed_goals }}/{{ total_goals }}</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
-<!-- /CHARTS ROW -->
 
-<!-- ══════════════════════════════════════
-     USERS TABLES
-══════════════════════════════════════ -->
-<div class="row g-3 mb-3">
-
-    <!-- Recent users -->
+<!-- Users Lists Row -->
+<div class="row">
     <div class="col-md-6">
-        <div class="dash-card">
-            <div class="dash-card-header">
-                <div class="dash-card-title">
-                    <div class="dash-card-icon"><i class="fas fa-user-plus"></i></div>
-                    <span>Recent Users</span>
-                </div>
-                <span class="dash-badge">Newest First</span>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Users</h5>
             </div>
-
-            <div class="txn-list">
-                {% for u in recent_users %}
-                <div class="txn-item">
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="txn-avatar income-avatar">
-                            {{ u.username|first|upper }}
-                        </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for u in recent_users %}
+                    <a href="{% url 'admin_user_detail' u.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="txn-title">{{ u.get_full_name|default:u.username }}</div>
-                            <div class="txn-meta">Joined: {{ u.date_joined|date:"M d, Y" }}</div>
+                            <i class="fas fa-user-circle me-2 text-teal"></i>
+                            <strong>{{ u.username }}</strong>
+                            <small class="text-muted d-block">{{ u.email }}</small>
                         </div>
-                    </div>
-                    <a href="{% url 'admin_user_detail' u.id %}" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-eye"></i>
+                        <small class="text-muted">{{ u.date_joined|date:"M d, Y" }}</small>
                     </a>
+                    {% empty %}
+                    <div class="list-group-item text-muted">No users yet</div>
+                    {% endfor %}
                 </div>
-                {% empty %}
-                <div class="empty-state">
-                    <i class="fas fa-users"></i>
-                    <p class="text-muted">No users yet</p>
-                </div>
-                {% endfor %}
-            </div>
-
-            <div class="text-center mt-2">
-                <a href="/admin/auth/user/" class="dash-view-all">
-                    Go to Django Admin <i class="fas fa-external-link-alt ms-1"></i>
-                </a>
             </div>
         </div>
     </div>
-
-    <!-- Most active users -->
+    
     <div class="col-md-6">
-        <div class="dash-card">
-            <div class="dash-card-header">
-                <div class="dash-card-title">
-                    <div class="dash-card-icon"><i class="fas fa-trophy"></i></div>
-                    <span>Most Active Users</span>
-                </div>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Most Active Users</h5>
             </div>
-
-            <div class="txn-list">
-                {% for u in top_users %}
-                <div class="txn-item">
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="txn-avatar expense-avatar">
-                            {{ u.username|first|upper }}
-                        </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for u in top_users %}
+                    <a href="{% url 'admin_user_detail' u.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="txn-title">{{ u.get_full_name|default:u.username }}</div>
-                            <div class="txn-meta">{{ u.total_transactions }} transactions</div>
+                            <i class="fas fa-star me-2 text-amber"></i>
+                            <strong>{{ u.username }}</strong>
+                            <small class="text-muted d-block">{{ u.total_transactions }} transactions</small>
                         </div>
-                    </div>
-                    <a href="{% url 'admin_user_detail' u.id %}" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-eye"></i>
+                        <span class="badge bg-teal">{{ u.income_count }} inc / {{ u.expense_count }} exp</span>
                     </a>
+                    {% empty %}
+                    <div class="list-group-item text-muted">No activity yet</div>
+                    {% endfor %}
                 </div>
-                {% empty %}
-                <div class="empty-state">
-                    <i class="fas fa-trophy"></i>
-                    <p class="text-muted">No activity yet</p>
-                </div>
-                {% endfor %}
             </div>
-
         </div>
     </div>
-
 </div>
-<!-- /USERS TABLES -->
-
 {% endblock %}
-
 
 {% block scripts %}
 <script>
-/* ── Admin Dashboard: Signup Chart ── */
-(function () {
-    const canvas = document.getElementById('signupChart');
-    if (!canvas) return;
-
-    const months = canvas.dataset.months.split(',');
-    const counts = canvas.dataset.counts.split(',').map(Number);
-
-    new Chart(canvas.getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: months,
-            datasets: [{
-                label: 'New Users',
-                data: counts,
-                backgroundColor: 'rgba(13,148,136,0.15)',
-                borderColor: '#0d9488',
-                borderWidth: 2,
-                borderRadius: 6,
-                hoverBackgroundColor: 'rgba(13,148,136,0.3)',
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: c => ` ${c.raw} new user${c.raw !== 1 ? 's' : ''}`
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('signupChart');
+    if (ctx) {
+        const months = JSON.parse(ctx.dataset.months);
+        const counts = JSON.parse(ctx.dataset.counts);
+        
+        new Chart(ctx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'New Users',
+                    data: counts,
+                    borderColor: '#0d9488',
+                    backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#e5e7eb' }
                     }
                 }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1 },
-                    grid: { color: 'rgba(0,0,0,0.04)' }
-                },
-                x: {
-                    grid: { display: false }
-                }
             }
-        }
-    });
-})();
+        });
+    }
+});
 </script>
 {% endblock %}
