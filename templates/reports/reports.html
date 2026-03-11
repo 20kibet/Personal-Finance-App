@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+{% block page_title %}Financial Reports{% endblock %}
+{% block content %}
+
+<!-- Filter Bar -->
+<div class="card p-3 mb-4">
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">Year</label>
+            <select name="year" class="form-control">
+                {% for year in years %}
+                <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">Month</label>
+            <select name="month" class="form-control">
+                {% for val, label in months %}
+                <option value="{{ val }}" {% if val == selected_month %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-2"></i>Filter</button>
+        </div>
+        <div class="col-md-3">
+            <button type="button" onclick="window.print()" class="btn btn-outline-secondary w-100"><i class="fas fa-print me-2"></i>Print Report</button>
+        </div>
+    </form>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card income">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="mb-1 opacity-75">Total Income</p>
+                    <h3 class="fw-bold">Ksh {{ total_income|floatformat:2 }}</h3>
+                </div>
+                <i class="fas fa-arrow-circle-down"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card expense">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="mb-1 opacity-75">Total Expenses</p>
+                    <h3 class="fw-bold">Ksh {{ total_income|floatformat:2 }}</h3>
+                </div>
+                <i class="fas fa-arrow-circle-up"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card {% if net_balance >= 0 %}balance{% else %}expense{% endif %}">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="mb-1 opacity-75">Net Balance</p>
+                    <h3 class="fw-bold">Ksh {{ total_income|floatformat:2 }}</h3>
+                </div>
+                <i class="fas fa-wallet"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-8">
+        <div class="card p-4">
+            <h6 class="fw-bold mb-3"><i class="fas fa-chart-bar me-2"></i>Monthly Income vs Expenses ({{ selected_year }})</h6>
+            <canvas id="barChart" height="120"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4">
+            <h6 class="fw-bold mb-3"><i class="fas fa-chart-pie me-2"></i>Expenses by Category</h6>
+            <canvas id="pieChart" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Savings Goals -->
+<div class="card p-4 mb-4">
+    <h6 class="fw-bold mb-3"><i class="fas fa-piggy-bank me-2"></i>Savings Goals Overview</h6>
+    {% for goal in savings_goals %}
+    <div class="mb-3">
+        <div class="d-flex justify-content-between">
+            <span class="fw-semibold">{{ goal.title }}</span>
+            <span class="text-muted">Ksh {{ goal.current_amount }} / Ksh {{ goal.target_amount }}</span>
+        </div>
+        <div class="progress mt-1" style="height:12px;">
+            <div class="progress-bar bg-success" style="width:{{ goal.progress_percentage }}%"></div>
+        </div>
+        <small class="text-muted">{{ goal.progress_percentage }}% complete
+            {% if goal.deadline %} · Deadline: {{ goal.deadline }}{% endif %}
+        </small>
+    </div>
+    {% empty %}
+    <p class="text-muted">No savings goals yet.</p>
+    {% endfor %}
+</div>
+
+<!-- Recent Transactions -->
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h6 class="fw-bold mb-3"><i class="fas fa-arrow-circle-down me-2 text-success"></i>Recent Income</h6>
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Amount</th></tr></thead>
+                <tbody>
+                {% for inc in recent_income %}
+                <tr>
+                    <td>{{ inc.title }}</td>
+                    <td><span class="badge bg-success">{{ inc.get_category_display }}</span></td>
+                    <td>{{ inc.date }}</td>
+                    <td class="text-success fw-bold">+Ksh {{ inc.amount }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="text-muted text-center">No records</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h6 class="fw-bold mb-3"><i class="fas fa-arrow-circle-up me-2 text-danger"></i>Recent Expenses</h6>
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Amount</th></tr></thead>
+                <tbody>
+                {% for exp in recent_expenses %}
+                <tr>
+                    <td>{{ exp.title }}</td>
+                    <td><span class="badge bg-danger">{{ exp.get_category_display }}</span></td>
+                    <td>{{ exp.date }}</td>
+                    <td class="text-success fw-bold">+Ksh {{ inc.amount }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="text-muted text-center">No records</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+new Chart(document.getElementById('barChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+        labels: {{ monthly_labels|safe }},
+        datasets: [
+            { label: 'Income', data: {{ monthly_income_data|safe }}, backgroundColor: 'rgba(46,125,50,0.7)', borderRadius: 6 },
+            { label: 'Expenses', data: {{ monthly_expense_data|safe }}, backgroundColor: 'rgba(198,40,40,0.7)', borderRadius: 6 }
+        ]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+});
+
+const pieLabels = {{ cat_labels|safe }};
+new Chart(document.getElementById('pieChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+        labels: pieLabels.length ? pieLabels : ['No Data'],
+        datasets: [{
+            data: {{ cat_amounts|safe }}.length ? {{ cat_amounts|safe }} : [1],
+            backgroundColor: ['#e53935','#1e88e5','#43a047','#fb8c00','#8e24aa','#00acc1','#f4511e','#6d4c41'],
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+</script>
+{% endblock %}

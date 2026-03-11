@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% block title %}Savings{% endblock %}
+{% block page_title %}Savings Goals{% endblock %}
+{% block content %}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h5 class="fw-800 mb-1" style="color:var(--primary);">
+            <i class="fas fa-piggy-bank me-2"></i>Savings Goals
+        </h5>
+        <small class="text-muted">Track your progress towards your financial goals</small>
+    </div>
+    <a href="{% url 'savings_add' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> Add Goal
+    </a>
+</div>
+
+{% if goals %}
+
+<!-- Summary Strip -->
+<div class="row g-3 mb-3">
+    <div class="col-md-4">
+        <div class="card p-3 text-center" style="border-top: 3px solid var(--primary);">
+            <div class="text-muted fw-600 mb-1" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.5px;">Total Goals</div>
+            <div class="fw-800" style="font-size:1.3rem; color:var(--primary);">{{ goals|length }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-center" style="border-top: 3px solid var(--success);">
+            <div class="text-muted fw-600 mb-1" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.5px;">Completed</div>
+            <div class="fw-800 text-success" style="font-size:1.3rem;">
+                {% with completed=0 %}
+                {% for goal in goals %}{% if goal.progress_percentage >= 100 %}
+                {% with completed=completed|add:1 %}{% endwith %}
+                {% endif %}{% endfor %}
+                {{ goals|length }}
+                {% endwith %}
+                🎯
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-center" style="border-top: 3px solid var(--primary-soft);">
+            <div class="text-muted fw-600 mb-1" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.5px;">In Progress</div>
+            <div class="fw-800" style="font-size:1.3rem; color:var(--primary-light);">{{ goals|length }} active</div>
+        </div>
+    </div>
+</div>
+
+<!-- Goals Cards -->
+<div class="row g-3">
+    {% for goal in goals %}
+    <div class="col-md-6">
+        <div class="card p-3" style="
+            border-top: 4px solid
+            {% if goal.progress_percentage >= 100 %}var(--success)
+            {% elif goal.progress_percentage >= 60 %}var(--primary)
+            {% else %}var(--primary-soft){% endif %};
+        ">
+
+            <!-- Card Header -->
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Icon -->
+                    <div style="width:42px;height:42px;border-radius:10px;background:var(--primary-pale);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+                        {% if goal.progress_percentage >= 100 %}🏆
+                        {% elif goal.progress_percentage >= 75 %}🔥
+                        {% elif goal.progress_percentage >= 50 %}💪
+                        {% elif goal.progress_percentage >= 25 %}🌱
+                        {% else %}🎯{% endif %}
+                    </div>
+                    <div>
+                        <div class="fw-700" style="font-size:0.92rem; color:var(--text-dark);">{{ goal.title }}</div>
+                        {% if goal.description %}
+                        <small class="text-muted">{{ goal.description|truncatechars:40 }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Status Badge & Actions -->
+                <div class="d-flex align-items-center gap-2">
+                    {% if goal.progress_percentage >= 100 %}
+                        <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Completed</span>
+                    {% elif goal.progress_percentage >= 60 %}
+                        <span class="badge bg-primary"><i class="fas fa-fire me-1"></i>On Fire</span>
+                    {% else %}
+                        <span class="badge bg-info"><i class="fas fa-seedling me-1"></i>In Progress</span>
+                    {% endif %}
+                    <a href="{% url 'savings_edit' goal.pk %}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'savings_delete' goal.pk %}" class="btn btn-sm btn-outline-danger">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Amount Stats -->
+            <div class="row text-center g-0 mb-3" style="background:var(--bg);border-radius:8px;padding:10px 0;">
+                <div class="col-4">
+                    <div class="fw-700" style="color:var(--primary);font-size:0.95rem;">Ksh {{ goal.current_amount }}</div>
+                    <small class="text-muted">Saved</small>
+                </div>
+                <div class="col-4" style="border-left:1px solid var(--border);border-right:1px solid var(--border);">
+                    <div class="fw-700" style="font-size:0.95rem;">Ksh {{ goal.target_amount }}</div>
+                    <small class="text-muted">Target</small>
+                </div>
+                <div class="col-4">
+                    <div class="fw-700 text-income" style="font-size:0.95rem;">Ksh {{ goal.remaining_amount }}</div>
+                    <small class="text-muted">Remaining</small>
+                </div>
+            </div>
+
+            <!-- Deadline -->
+            {% if goal.deadline %}
+            <div class="mb-2">
+                <small class="text-muted">
+                    <i class="fas fa-calendar me-1"></i>Deadline: <strong>{{ goal.deadline }}</strong>
+                </small>
+            </div>
+            {% endif %}
+
+            <!-- Progress Bar -->
+            <div class="mb-1">
+                <div class="d-flex justify-content-between mb-1">
+                    <small class="text-muted fw-600">Progress</small>
+                    <small class="fw-700 {% if goal.progress_percentage >= 100 %}text-success{% elif goal.progress_percentage >= 60 %}text-income{% else %}text-muted{% endif %}">
+                        {{ goal.progress_percentage }}%
+                    </small>
+                </div>
+                <div class="progress" style="height:8px;">
+                    <div class="progress-bar
+                        {% if goal.progress_percentage >= 100 %}bg-success
+                        {% else %}bg-success{% endif %}"
+                        style="width:{{ goal.progress_percentage }}%">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Motivational message -->
+            {% if goal.progress_percentage >= 100 %}
+            <div class="mt-2 small text-success fw-600">
+                <i class="fas fa-trophy me-1"></i>Goal achieved! Congratulations! 🎉
+            </div>
+            {% elif goal.progress_percentage >= 75 %}
+            <div class="mt-2 small fw-600" style="color:var(--primary);">
+                <i class="fas fa-fire me-1"></i>Almost there! Keep going!
+            </div>
+            {% elif goal.progress_percentage >= 50 %}
+            <div class="mt-2 small fw-600" style="color:var(--primary-light);">
+                <i class="fas fa-star me-1"></i>Halfway there! Great progress!
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+
+<!-- Empty State -->
+<div class="card">
+    <div class="empty-state">
+        <div style="width:72px;height:72px;background:var(--primary-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.8rem;">
+            <i class="fas fa-piggy-bank" style="color:var(--primary);"></i>
+        </div>
+        <h5 class="fw-700 mb-2">No Savings Goals Yet</h5>
+        <p class="text-muted mb-4" style="max-width:320px;margin:0 auto 16px;">
+            Start setting savings goals to track your progress towards financial freedom.
+        </p>
+        <a href="{% url 'savings_add' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Create Your First Goal
+        </a>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

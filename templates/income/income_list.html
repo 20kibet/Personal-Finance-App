@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Income{% endblock %}
+{% block page_title %}Income Management{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="card px-4 py-3 text-white" style="background: linear-gradient(135deg,#2e7d32,#43a047);">
+        <small class="opacity-75">Total Income</small>
+        <h4 class="fw-bold mb-0">Ksh {{ total|floatformat:2 }}</h4>
+    </div>
+    <a href="{% url 'income_add' %}" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add Income</a>
+</div>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Amount</th><th>Actions</th></tr></thead>
+            <tbody>
+            {% for income in incomes %}
+            <tr>
+                <td class="fw-semibold">{{ income.title }}</td>
+                <td><span class="badge bg-success">{{ income.get_category_display }}</span></td>
+                <td>{{ income.date }}</td>
+                <td class="text-success fw-bold">+Ksh {{ income.amount }}</td>
+                <td>
+                    <a href="{% url 'income_edit' income.pk %}" class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-edit"></i></a>
+                    <a href="{% url 'income_delete' income.pk %}" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-center text-muted py-4">No income records found. <a href="{% url 'income_add' %}">Add your first income!</a></td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

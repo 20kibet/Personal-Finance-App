@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Expenses{% endblock %}
+{% block page_title %}Expense Management{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="card px-4 py-3 text-white" style="background: linear-gradient(135deg,#c62828,#e53935);">
+        <small class="opacity-75">Total Expenses</small>
+        <h4 class="fw-bold mb-0">Ksh {{ total|floatformat:2 }}</h4>
+    </div>
+    <a href="{% url 'expense_add' %}" class="btn btn-danger"><i class="fas fa-plus me-2"></i>Add Expense</a>
+</div>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Amount</th><th>Actions</th></tr></thead>
+            <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td class="fw-semibold">{{ expense.title }}</td>
+                <td><span class="badge bg-danger">{{ expense.get_category_display }}</span></td>
+                <td>{{ expense.date }}</td>
+                <td class="text-danger fw-bold">-Ksh {{ expense.amount }}</td>
+                <td>
+                    <a href="{% url 'expense_edit' expense.pk %}" class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-edit"></i></a>
+                    <a href="{% url 'expense_delete' expense.pk %}" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-center text-muted py-4">No expense records found. <a href="{% url 'expense_add' %}">Add your first expense!</a></td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

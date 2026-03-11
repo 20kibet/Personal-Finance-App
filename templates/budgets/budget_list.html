@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% block title %}Budgets{% endblock %}
+{% block page_title %}Budget Planning{% endblock %}
+{% block content %}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-800 mb-1" style="color:var(--primary);">
+            <i class="fas fa-chart-pie me-2"></i>Budget Planning
+        </h5>
+        <small class="text-muted">Monitor and control your monthly spending limits</small>
+    </div>
+    
+</div>
+
+<!-- Month/Year Filter -->
+<div class="card p-4 mb-4" style="border-left: 4px solid var(--primary);">
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label fw-600">
+                <i class="fas fa-calendar-alt me-1 text-primary"></i> Month
+            </label>
+            <select name="month" class="form-control">
+                {% for val, label in months %}
+                <option value="{{ val }}" {% if val == selected_month %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-600">
+                <i class="fas fa-calendar me-1 text-primary"></i> Year
+            </label>
+            <select name="year" class="form-control">
+                {% for year in years %}
+                <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-filter me-1"></i> Filter
+            </button>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <div class="text-muted small">
+                <i class="fas fa-info-circle me-1"></i>
+                Showing budgets for
+                <strong>
+                    {% for val, label in months %}{% if val == selected_month %}{{ label }}{% endif %}{% endfor %}
+                    {{ selected_year }}
+                </strong>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% if budget_data %}
+
+<!-- Summary Strip -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card p-3 text-center" style="border-top: 3px solid var(--primary);">
+            <div class="text-muted small fw-600 mb-1">TOTAL BUDGETED</div>
+            <div class="fw-800" style="font-size:1.3rem; color:var(--primary);">
+                Ksh {% for item in budget_data %}{{ item.budget.amount|floatformat:2 }}{% if not forloop.last %} + {% endif %}{% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-center" style="border-top: 3px solid var(--danger);">
+            <div class="text-muted small fw-600 mb-1">TOTAL SPENT</div>
+            <div class="fw-800 text-danger" style="font-size:1.3rem;">
+                Ksh {{ budget_data|length }} categories tracked
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-center" style="border-top: 3px solid var(--success);">
+            <div class="text-muted small fw-600 mb-1">CATEGORIES SET</div>
+            <div class="fw-800 text-success" style="font-size:1.3rem;">
+                {{ budget_data|length }} active
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Budget Cards -->
+<div class="row g-4">
+    {% for item in budget_data %}
+    <div class="col-md-6">
+        <div class="card p-4" style="
+            border-top: 4px solid
+            {% if item.percentage >= 90 %}#c62828
+            {% elif item.percentage >= 70 %}#f57c00
+            {% else %}var(--primary){% endif %};
+            transition: all 0.3s ease;
+        ">
+
+            <!-- Card Header -->
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Category Icon -->
+                    <div style="
+                        width:46px; height:46px;
+                        border-radius:12px;
+                        background: var(--accent-light);
+                        display:flex; align-items:center; justify-content:center;
+                        font-size:1.2rem;
+                    ">
+                        {% if item.budget.category == 'food' %}🍔
+                        {% elif item.budget.category == 'transport' %}🚗
+                        {% elif item.budget.category == 'rent' %}🏠
+                        {% elif item.budget.category == 'utilities' %}💡
+                        {% elif item.budget.category == 'entertainment' %}🎬
+                        {% elif item.budget.category == 'health' %}💊
+                        {% elif item.budget.category == 'education' %}📚
+                        {% elif item.budget.category == 'shopping' %}🛍️
+                        {% else %}💰{% endif %}
+                    </div>
+                    <div>
+                        <div class="fw-700" style="font-size:0.95rem; color:var(--text-dark);">
+                            {{ item.budget.get_category_display }}
+                        </div>
+                        <small class="text-muted">
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            {{ item.budget.month }}/{{ item.budget.year }}
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Status Badge & Delete -->
+                <div class="d-flex align-items-center gap-2">
+                    {% if item.percentage >= 90 %}
+                        <span class="badge bg-danger">
+                            <i class="fas fa-exclamation-triangle me-1"></i>Over Budget
+                        </span>
+                    {% elif item.percentage >= 70 %}
+                        <span class="badge bg-warning">
+                            <i class="fas fa-exclamation-circle me-1"></i>Almost Full
+                        </span>
+                    {% else %}
+                        <span class="badge bg-success">
+                            <i class="fas fa-check-circle me-1"></i>On Track
+                        </span>
+                    {% endif %}
+                    <a href="{% url 'budget_delete' item.budget.pk %}"
+                       class="btn btn-sm btn-outline-danger"
+                       title="Delete budget">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Amount Stats -->
+            <div class="row text-center g-0 mb-3"
+                 style="background:var(--bg); border-radius:10px; padding:12px 0;">
+                <div class="col-4">
+                    <div class="fw-700" style="color:var(--primary); font-size:1rem;">
+                        Ksh {{ item.budget.amount|floatformat:2 }}
+                    </div>
+                    <small class="text-muted">Budgeted</small>
+                </div>
+                <div class="col-4" style="border-left:1px solid var(--border); border-right:1px solid var(--border);">
+                    <div class="fw-700 text-danger" style="font-size:1rem;">
+                        Ksh {{ item.spent|floatformat:2 }}
+                    </div>
+                    <small class="text-muted">Spent</small>
+                </div>
+                <div class="col-4">
+                    <div class="fw-700 {% if item.remaining >= 0 %}text-success{% else %}text-danger{% endif %}"
+                         style="font-size:1rem;">
+                        Ksh {{ item.remaining|floatformat:2 }}
+                    </div>
+                    <small class="text-muted">Remaining</small>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-1">
+                <div class="d-flex justify-content-between mb-1">
+                    <small class="text-muted fw-600">Spending Progress</small>
+                    <small class="fw-700
+                        {% if item.percentage >= 90 %}text-danger
+                        {% elif item.percentage >= 70 %}text-warning
+                        {% else %}text-success{% endif %}">
+                        {{ item.percentage }}%
+                    </small>
+                </div>
+                <div class="progress" style="height:10px;">
+                    <div class="progress-bar
+                        {% if item.percentage >= 90 %}bg-danger
+                        {% elif item.percentage >= 70 %}bg-warning
+                        {% else %}bg-success{% endif %}"
+                        style="width: {{ item.percentage }}%">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning message -->
+            {% if item.percentage >= 90 %}
+            <div class="mt-2 small text-danger fw-600">
+                <i class="fas fa-exclamation-triangle me-1"></i>
+                You have exceeded or nearly exhausted this budget!
+            </div>
+            {% elif item.percentage >= 70 %}
+            <div class="mt-2 small text-warning fw-600">
+                <i class="fas fa-exclamation-circle me-1"></i>
+                You are approaching your budget limit.
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+
+<!-- Empty State -->
+<div class="card">
+    <div class="empty-state py-5 text-center">
+        <div style="
+            width:80px; height:80px;
+            background:var(--accent-light);
+            border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            margin:0 auto 20px;
+            font-size:2rem;
+        ">
+            <i class="fas fa-chart-pie" style="color:var(--primary);"></i>
+        </div>
+        <h5 class="fw-700 mb-2" style="color:var(--text-dark);">No Budgets Set</h5>
+        <p class="text-muted mb-4" style="max-width:360px; margin:0 auto 20px;">
+            You haven't set any budgets for this month yet.
+            Start by setting spending limits for your expense categories.
+        </p>
+        <a href="{% url 'budget_add' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus me-2"></i>Set Your First Budget
+        </a>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Animate progress bars
+document.querySelectorAll('.progress-bar').forEach(bar => {
+    const target = bar.style.width;
+    bar.style.width = '0%';
+    setTimeout(() => {
+        bar.style.transition = 'width 1s cubic-bezier(0.4,0,0.2,1)';
+        bar.style.width = target;
+    }, 300);
+});
+
+// Animate budget cards
+document.querySelectorAll('.card').forEach((card, i) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    setTimeout(() => {
+        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+    }, i * 80);
+});
+</script>
+{% endblock %}

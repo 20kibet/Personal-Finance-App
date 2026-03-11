@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- Welcome Banner -->
+<div class="welcome-banner mb-3">
+    <div class="row align-items-center">
+        <div class="col-md-9">
+            <h5 class="welcome-title">Good day, {{ user.first_name|default:user.username }}! 👋</h5>
+            <p class="welcome-sub">Here's your financial overview for today.</p>
+        </div>
+        <div class="col-md-3 text-end d-none d-md-block">
+            <i class="fas fa-chart-line welcome-icon"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-3">
+    <div class="col-md-3">
+        <div class="stat-mini income">
+            <div class="stat-mini-left">
+                <div class="stat-mini-icon">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+            </div>
+            <div class="stat-mini-right">
+                <div class="stat-mini-label">Total Income</div>
+                <div class="stat-mini-value">Ksh {{ total_income|floatformat:2 }}</div>
+                <div class="stat-mini-sub">This month: Ksh {{ monthly_income|floatformat:2 }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-mini expense">
+            <div class="stat-mini-left">
+                <div class="stat-mini-icon">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+            </div>
+            <div class="stat-mini-right">
+                <div class="stat-mini-label">Total Expenses</div>
+                <div class="stat-mini-value">Ksh {{ total_expenses|floatformat:2 }}</div>
+                <div class="stat-mini-sub">This month: Ksh {{ monthly_expenses|floatformat:2 }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-mini balance">
+            <div class="stat-mini-left">
+                <div class="stat-mini-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+            </div>
+            <div class="stat-mini-right">
+                <div class="stat-mini-label">Balance</div>
+                <div class="stat-mini-value">Ksh {{ balance|floatformat:2 }}</div>
+                <div class="stat-mini-sub">Income minus Expenses</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-mini savings">
+            <div class="stat-mini-left">
+                <div class="stat-mini-icon">
+                    <i class="fas fa-piggy-bank"></i>
+                </div>
+            </div>
+            <div class="stat-mini-right">
+                <div class="stat-mini-label">Savings Goals</div>
+                <div class="stat-mini-value">{{ savings_goals|length }}</div>
+                <div class="stat-mini-sub">Active goals</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts & Goals -->
+<div class="row g-3 mb-3">
+    <div class="col-md-6">
+        <div class="dash-card h-100">
+            <div class="dash-card-header">
+                <div class="dash-card-title">
+                    <div class="dash-card-icon"><i class="fas fa-chart-pie"></i></div>
+                    <span>Expenses by Category</span>
+                </div>
+                <span class="dash-badge">This Month</span>
+            </div>
+            {% if expense_categories %}
+            <canvas id="expenseChart" height="200"
+                data-categories="{{ expense_categories|safe }}"
+                data-amounts="{{ expense_amounts|safe }}">
+            </canvas>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-chart-pie"></i>
+                <h6>No expenses this month</h6>
+                <p>Start adding expenses to see your breakdown</p>
+                <a href="{% url 'expense_add' %}" class="btn btn-primary btn-sm">Add Expense</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="dash-card h-100">
+            <div class="dash-card-header">
+                <div class="dash-card-title">
+                    <div class="dash-card-icon"><i class="fas fa-piggy-bank"></i></div>
+                    <span>Savings Goals</span>
+                </div>
+                <a href="{% url 'savings_add' %}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-plus"></i> New
+                </a>
+            </div>
+            {% for goal in savings_goals|slice:":4" %}
+            <div class="goal-item">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="goal-title">{{ goal.title }}</span>
+                    <span class="goal-amount">{{ goal.progress_percentage }}%</span>
+                </div>
+                <div class="progress mb-1">
+                    <div class="progress-bar bg-success" style="width:{ goal.progress_percentage }%"></div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="goal-pct">Ksh {{ goal.current_amount|floatformat:0 }} saved</span>
+                    <span class="goal-pct">Target: Ksh {{ goal.target_amount|floatformat:0 }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-piggy-bank"></i>
+                <h6>No savings goals yet</h6>
+                <p>Start saving towards something amazing!</p>
+                <a href="{% url 'savings_add' %}" class="btn btn-primary btn-sm">Create Goal</a>
+            </div>
+            {% endfor %}
+            {% if savings_goals|length > 4 %}
+            <div class="text-center mt-2">
+                <a href="{% url 'savings_list' %}" class="dash-view-all">View All <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Transactions -->
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <div class="dash-card-title">
+                    <div class="dash-card-icon income-icon"><i class="fas fa-arrow-circle-down"></i></div>
+                    <span>Recent Income</span>
+                </div>
+                <a href="{% url 'income_add' %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> Add
+                </a>
+            </div>
+            <div class="txn-list">
+                {% for income in recent_income %}
+                <div class="txn-item">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="txn-avatar income-avatar">
+                            {{ income.title|first|upper }}
+                        </div>
+                        <div>
+                            <div class="txn-title">{{ income.title }}</div>
+                            <div class="txn-meta">{{ income.date|date:"M d, Y" }} · {{ income.get_category_display }}</div>
+                        </div>
+                    </div>
+                    <span class="txn-amount text-income">+Ksh {{ income.amount|floatformat:2 }}</span>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-arrow-circle-down"></i>
+                    <h6>No income records</h6>
+                    <p>Add your first income entry</p>
+                    <a href="{% url 'income_add' %}" class="btn btn-primary btn-sm">Add Income</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% if recent_income %}
+            <div class="text-center mt-2">
+                <a href="{% url 'income_list' %}" class="dash-view-all">View All <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <div class="dash-card-title">
+                    <div class="dash-card-icon expense-icon"><i class="fas fa-arrow-circle-up"></i></div>
+                    <span>Recent Expenses</span>
+                </div>
+                <a href="{% url 'expense_add' %}" class="btn btn-danger btn-sm">
+                    <i class="fas fa-plus"></i> Add
+                </a>
+            </div>
+            <div class="txn-list">
+                {% for expense in recent_expenses %}
+                <div class="txn-item">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="txn-avatar expense-avatar">
+                            {{ expense.title|first|upper }}
+                        </div>
+                        <div>
+                            <div class="txn-title">{{ expense.title }}</div>
+                            <div class="txn-meta">{{ expense.date|date:"M d, Y" }} · {{ expense.get_category_display }}</div>
+                        </div>
+                    </div>
+                    <span class="txn-amount text-expense">-Ksh {{ expense.amount|floatformat:2 }}</span>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-arrow-circle-up"></i>
+                    <h6>No expense records</h6>
+                    <p>Add your first expense entry</p>
+                    <a href="{% url 'expense_add' %}" class="btn btn-danger btn-sm">Add Expense</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% if recent_expenses %}
+            <div class="text-center mt-2">
+                <a href="{% url 'expense_list' %}" class="dash-view-all">View All <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- FAB -->
+<div class="fab-wrap">
+    <div class="dropdown dropup">
+        <button class="fab-btn" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-plus fab-icon"></i>
+        </button>
+        <ul class="dropdown-menu fab-menu dropdown-menu-end py-1 mb-3">
+            <li>
+                <a class="dropdown-item fab-menu-item" href="{% url 'income_add' %}">
+                    <div class="fab-menu-icon income-icon"><i class="fas fa-arrow-down"></i></div>
+                    <div>
+                        <div class="fab-menu-title">Add Income</div>
+                        <div class="fab-menu-sub">Record a new income</div>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item fab-menu-item" href="{% url 'expense_add' %}">
+                    <div class="fab-menu-icon expense-icon"><i class="fas fa-arrow-up"></i></div>
+                    <div>
+                        <div class="fab-menu-title">Add Expense</div>
+                        <div class="fab-menu-sub">Record a new expense</div>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item fab-menu-item" href="{% url 'savings_add' %}">
+                    <div class="fab-menu-icon savings-icon"><i class="fas fa-piggy-bank"></i></div>
+                    <div>
+                        <div class="fab-menu-title">Add Savings Goal</div>
+                        <div class="fab-menu-sub">Create a new goal</div>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item fab-menu-item" href="{% url 'budget_add' %}">
+                    <div class="fab-menu-icon budget-icon"><i class="fas fa-chart-pie"></i></div>
+                    <div>
+                        <div class="fab-menu-title">Set Budget</div>
+                        <div class="fab-menu-sub">Plan your spending</div>
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+{% endblock %}
