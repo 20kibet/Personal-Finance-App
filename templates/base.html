@@ -16,52 +16,91 @@
 <canvas id="wave-canvas" class="wave-bg"></canvas>
 
 <div class="sidebar">
+
+    <!-- Brand -->
     <div class="brand">
         <div class="brand-icon"><i class="fas fa-wallet"></i></div>
         <div>
             <div class="brand-text">FinanceApp</div>
-            <span class="brand-sub">Personal Finance</span>
+            {% if user.is_staff %}
+                <span class="brand-sub">Admin Panel</span>
+            {% else %}
+                <span class="brand-sub">Personal Finance</span>
+            {% endif %}
         </div>
     </div>
+
     <nav>
+
+        {% if user.is_staff %}
+        <!-- ══════════════════════════════════════
+             ADMIN SIDEBAR
+        ══════════════════════════════════════ -->
+        <div class="nav-section-label">Admin Panel</div>
+        <a href="{% url 'admin_dashboard' %}"
+           class="nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+            <i class="fas fa-th-large"></i> Overview
+        </a>
+        <a href="/admin/auth/user/"
+           class="nav-link">
+            <i class="fas fa-users"></i> Manage Users
+        </a>
+        <a href="/admin/"
+           class="nav-link">
+            <i class="fas fa-cog"></i> Django Admin
+        </a>
+
+        <div class="nav-section-label" style="margin-top: 16px;">Quick Links</div>
+        <a href="{% url 'dashboard' %}" class="nav-link">
+            <i class="fas fa-arrow-left"></i> Back to App
+        </a>
+
+        {% else %}
+        <!-- ══════════════════════════════════════
+             USER SIDEBAR
+        ══════════════════════════════════════ -->
         <div class="nav-section-label">Menu</div>
-        <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <a href="{% url 'dashboard' %}"
+           class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
             <i class="fas fa-th-large"></i> Dashboard
         </a>
-        <a href="{% url 'income_list' %}" class="nav-link {% if 'income' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'income_list' %}"
+           class="nav-link {% if 'income' in request.resolver_match.url_name %}active{% endif %}">
             <i class="fas fa-arrow-circle-down"></i> Income
         </a>
-        <a href="{% url 'expense_list' %}" class="nav-link {% if 'expense' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'expense_list' %}"
+           class="nav-link {% if 'expense' in request.resolver_match.url_name %}active{% endif %}">
             <i class="fas fa-arrow-circle-up"></i> Expenses
         </a>
-        <a href="{% url 'budget_list' %}" class="nav-link {% if 'budget' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'budget_list' %}"
+           class="nav-link {% if 'budget' in request.resolver_match.url_name %}active{% endif %}">
             <i class="fas fa-chart-pie"></i> Budgets
         </a>
-        <a href="{% url 'savings_list' %}" class="nav-link {% if 'savings' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'savings_list' %}"
+           class="nav-link {% if 'savings' in request.resolver_match.url_name %}active{% endif %}">
             <i class="fas fa-piggy-bank"></i> Savings
         </a>
-        <a href="{% url 'reports' %}" class="nav-link {% if 'reports' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'reports' %}"
+           class="nav-link {% if 'reports' in request.resolver_match.url_name %}active{% endif %}">
             <i class="fas fa-chart-bar"></i> Reports
         </a>
 
-        <!-- Admin link - inside nav but before footer -->
-        {% if user.is_staff %}
-        <div class="nav-section-label" style="margin-top: 16px;">Admin</div>
-        <a href="{% url 'admin_dashboard' %}" class="nav-link {% if 'admin_dashboard' in request.resolver_match.url_name %}active{% endif %}">
-            <i class="fas fa-shield-alt"></i> Admin Dashboard
-        </a>
         {% endif %}
+
     </nav>
-    
+
+    <!-- Sidebar footer — always visible -->
     <div class="sidebar-footer">
         <hr>
-        <a href="{% url 'accounts:profile' %}" class="nav-link">
+        <a href="{% url 'accounts:profile' %}"
+           class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
             <i class="fas fa-user-circle"></i> Profile
         </a>
         <a href="{% url 'accounts:logout' %}" class="nav-link">
             <i class="fas fa-sign-out-alt"></i> Logout
         </a>
     </div>
+
 </div>
 
 <div class="main-content">
@@ -70,8 +109,20 @@
         <div class="topbar-right">
             <span class="topbar-date" id="topbar-date"></span>
             <div class="topbar-user">
-                <div class="topbar-avatar">{{ user.first_name.0|upper }}{{ user.last_name.0|upper }}</div>
+                <div class="topbar-avatar">
+                    {{ user.first_name.0|upper }}{{ user.last_name.0|upper }}
+                </div>
                 <span>{{ user.get_full_name|default:user.username }}</span>
+                {% if user.is_staff %}
+                    <span class="badge ms-1"
+                          style="background:rgba(13,148,136,0.15);
+                                 color:var(--primary);
+                                 font-size:0.7rem;
+                                 padding:3px 8px;
+                                 border-radius:20px;">
+                        Admin
+                    </span>
+                {% endif %}
             </div>
         </div>
     </div>

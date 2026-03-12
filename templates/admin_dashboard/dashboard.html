@@ -1,4 +1,4 @@
-{% extends 'admin_base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Admin Dashboard{% endblock %}
@@ -22,388 +22,336 @@
 <!-- Key Metrics Row -->
 <div class="row g-3 mb-4">
     <div class="col-xl-3 col-md-6">
-        <div class="stat-card income">
-            <div class="stat-label">Total Users</div>
-            <div class="stat-value">{{ total_users }}</div>
-            <div class="stat-sub">
-                <i class="fas fa-arrow-up"></i> {{ new_users_today }} new today
+        <div class="stat-mini income">
+            <div class="stat-mini-left">
+                <div class="stat-mini-icon"><i class="fas fa-users"></i></div>
             </div>
-            <div class="stat-icon">
-                <i class="fas fa-users"></i>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card expense">
-            <div class="stat-label">Platform Balance</div>
-            <div class="stat-value">Ksh {{ platform_balance|floatformat:0 }}</div>
-            <div class="stat-sub">
-                <i class="fas fa-circle"></i> Income: Ksh {{ total_income|floatformat:0 }}
-            </div>
-            <div class="stat-icon">
-                <i class="fas fa-scale-balanced"></i>
+            <div class="stat-mini-right">
+                <div class="stat-mini-label">Total Users</div>
+                <div class="stat-mini-value">{{ total_users }}</div>
+                <div class="stat-mini-sub">{{ new_users_today }} new today</div>
             </div>
         </div>
     </div>
-    
+
     <div class="col-xl-3 col-md-6">
-        <div class="stat-card balance">
-            <div class="stat-label">Active Budgets</div>
-            <div class="stat-value">{{ active_budgets }}/{{ total_budgets }}</div>
-            <div class="stat-sub">
-                <i class="fas fa-chart-line"></i> {{ active_budgets_pct|default:"0" }}% active
+        <div class="stat-mini expense">
+            <div class="stat-mini-left">
+                <div class="stat-mini-icon"><i class="fas fa-coins"></i></div>
             </div>
-            <div class="stat-icon">
-                <i class="fas fa-chart-pie"></i>
+            <div class="stat-mini-right">
+                <div class="stat-mini-label">Platform Balance</div>
+                <div class="stat-mini-value">Ksh {{ platform_balance|floatformat:0 }}</div>
+                <div class="stat-mini-sub">Income: Ksh {{ total_income|floatformat:0 }}</div>
             </div>
         </div>
     </div>
-    
+
     <div class="col-xl-3 col-md-6">
-        <div class="stat-card savings">
-            <div class="stat-label">Savings Goals</div>
-            <div class="stat-value">{{ completed_goals }}/{{ total_goals }}</div>
-            <div class="stat-sub">
-                <i class="fas fa-trophy"></i> {{ completion_rate|default:"0" }}% completed
+        <div class="stat-mini balance">
+            <div class="stat-mini-left">
+                <div class="stat-mini-icon"><i class="fas fa-chart-pie"></i></div>
             </div>
-            <div class="stat-icon">
-                <i class="fas fa-piggy-bank"></i>
+            <div class="stat-mini-right">
+                <div class="stat-mini-label">Active Budgets</div>
+                <div class="stat-mini-value">{{ active_budgets }}/{{ total_budgets }}</div>
+                <div class="stat-mini-sub">This month</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-mini savings">
+            <div class="stat-mini-left">
+                <div class="stat-mini-icon"><i class="fas fa-piggy-bank"></i></div>
+            </div>
+            <div class="stat-mini-right">
+                <div class="stat-mini-label">Savings Goals</div>
+                <div class="stat-mini-value">{{ completed_goals }}/{{ total_goals }}</div>
+                <div class="stat-mini-sub">Completed</div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Charts Section -->
-<div class="row mb-4">
+<!-- Charts Row -->
+<div class="row g-3 mb-4">
+
+    <!-- Signup chart -->
     <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-chart-line me-2 text-teal"></i>
-                    User Growth
-                </h5>
-                <div class="btn-group btn-group-sm">
-                    <button class="btn btn-outline-secondary active">6 Months</button>
-                    <button class="btn btn-outline-secondary">Year</button>
-                    <button class="btn btn-outline-secondary">All</button>
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <div class="dash-card-title">
+                    <div class="dash-card-icon"><i class="fas fa-chart-line"></i></div>
+                    <span>User Growth (Last 6 Months)</span>
                 </div>
+                <span class="dash-badge">Growth</span>
             </div>
-            <div class="card-body">
-                <canvas id="signupChart"
-                        data-months='{{ signup_months|safe }}'
-                        data-counts='{{ signup_counts|safe }}'
-                        style="height: 300px; width: 100%;"></canvas>
-            </div>
+            <canvas id="signupChart"
+                    data-months='{{ signup_months|safe }}'
+                    data-counts='{{ signup_counts|safe }}'
+                    style="height:280px; width:100%;"></canvas>
         </div>
     </div>
-    
+
+    <!-- Platform overview -->
     <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-chart-pie me-2 text-teal"></i>
-                    Platform Overview
-                </h5>
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <div class="dash-card-title">
+                    <div class="dash-card-icon"><i class="fas fa-th-large"></i></div>
+                    <span>Platform Overview</span>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="platform-stats">
-                    <div class="stat-item mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>Active Users</span>
-                            <span class="fw-bold">{{ active_users }}/{{ total_users }}</span>
-                        </div>
-                        <div class="progress" style="height: 8px;">
-                            {% widthratio active_users total_users 100 as active_pct %}
-                            <div class="progress-bar bg-success" style="width: {{ active_pct }}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>Income vs Expenses</span>
-                            <span class="fw-bold">Ksh {{ total_income|floatformat:0 }} / Ksh {{ total_expenses|floatformat:0 }}</span>
-                        </div>
-                        <div class="progress" style="height: 8px;">
-                            {% widthratio total_expenses total_income 100 as expense_ratio %}
-                            <div class="progress-bar bg-warning" style="width: {{ expense_ratio }}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>Budget Usage</span>
-                            <span class="fw-bold">{{ active_budgets }} active</span>
-                        </div>
-                        <div class="progress" style="height: 8px;">
-                            {% widthratio active_budgets total_budgets 100 as budget_pct %}
-                            <div class="progress-bar bg-info" style="width: {{ budget_pct }}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-item">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>Goal Completion</span>
-                            <span class="fw-bold">{{ completed_goals }}/{{ total_goals }}</span>
-                        </div>
-                        <div class="progress" style="height: 8px;">
-                            {% widthratio completed_goals total_goals 100 as goal_pct %}
-                            <div class="progress-bar bg-primary" style="width: {{ goal_pct }}%"></div>
-                        </div>
+
+            <!-- Active users -->
+            <div class="mb-3 mt-2">
+                <div class="d-flex justify-content-between mb-1">
+                    <small>Active Users</small>
+                    <small class="fw-bold">{{ active_users }}/{{ total_users }}</small>
+                </div>
+                <div class="progress" style="height:6px; border-radius:3px;">
+                    {% widthratio active_users total_users 100 as active_pct %}
+                    <div class="progress-bar bg-success" style="width:{{ active_pct }}%;"></div>
+                </div>
+            </div>
+
+            <!-- Income vs expenses -->
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <small>Expense Ratio</small>
+                    <small class="fw-bold">{{ total_expenses|floatformat:0 }} / {{ total_income|floatformat:0 }}</small>
+                </div>
+                <div class="progress" style="height:6px; border-radius:3px;">
+                    {% widthratio total_expenses total_income 100 as expense_ratio %}
+                    <div class="progress-bar bg-warning" style="width:{{ expense_ratio }}%;"></div>
+                </div>
+            </div>
+
+            <!-- Budget usage -->
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <small>Budget Usage</small>
+                    <small class="fw-bold">{{ active_budgets }} active</small>
+                </div>
+                <div class="progress" style="height:6px; border-radius:3px;">
+                    {% widthratio active_budgets total_budgets 100 as budget_pct %}
+                    <div class="progress-bar" style="width:{{ budget_pct }}%; background:var(--primary);"></div>
+                </div>
+            </div>
+
+            <!-- Goal completion -->
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <small>Goal Completion</small>
+                    <small class="fw-bold">{{ completed_goals }}/{{ total_goals }}</small>
+                </div>
+                <div class="progress" style="height:6px; border-radius:3px;">
+                    {% widthratio completed_goals total_goals 100 as goal_pct %}
+                    <div class="progress-bar bg-success" style="width:{{ goal_pct }}%;"></div>
+                </div>
+            </div>
+
+            <hr class="my-3">
+
+            <div class="row g-2 text-center">
+                <div class="col-6">
+                    <div class="p-2 rounded" style="background:#f0fdf4;">
+                        <small class="text-muted d-block">Total Income</small>
+                        <strong style="color:#0d9488;">Ksh {{ total_income|floatformat:0 }}</strong>
                     </div>
                 </div>
-                
-                <hr class="my-3">
-                
-                <div class="quick-numbers">
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <div class="p-2 bg-light rounded text-center">
-                                <small class="text-muted d-block">Total Income</small>
-                                <strong class="text-teal">Ksh {{ total_income|floatformat:0 }}</strong>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="p-2 bg-light rounded text-center">
-                                <small class="text-muted d-block">Total Expenses</small>
-                                <strong class="text-danger">Ksh {{ total_expenses|floatformat:0 }}</strong>
-                            </div>
-                        </div>
+                <div class="col-6">
+                    <div class="p-2 rounded" style="background:#fef2f2;">
+                        <small class="text-muted d-block">Total Expenses</small>
+                        <strong class="text-danger">Ksh {{ total_expenses|floatformat:0 }}</strong>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
 
-<!-- User Management Section -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-user-cog me-2 text-teal"></i>
-                    User Management
-                </h5>
-                <div>
-                    <a href="#" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-list me-1"></i> View All Users
-                    </a>
-                </div>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Email</th>
-                                <th>Joined</th>
-                                <th>Income</th>
-                                <th>Expenses</th>
-                                <th>Balance</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for u in recent_users %}
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-circle me-2" style="width: 32px; height: 32px; background: #e0f2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                            <span class="fw-bold" style="color: #0284c7;">{{ u.username|first|upper }}</span>
-                                        </div>
-                                        <div>
-                                            <strong>{{ u.username }}</strong>
-                                            {% if u.is_superuser %}
-                                                <span class="badge bg-primary ms-2">Admin</span>
-                                            {% elif u.is_staff %}
-                                                <span class="badge bg-info ms-2">Staff</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>{{ u.email|default:"—" }}</td>
-                                <td>{{ u.date_joined|date:"M d, Y" }}</td>
-                                <td class="text-teal">Ksh {{ u.total_income|default:"0"|floatformat:0 }}</td>
-                                <td class="text-danger">Ksh {{ u.total_expenses|default:"0"|floatformat:0 }}</td>
-                                <td class="{% if u.balance >= 0 %}text-teal{% else %}text-danger{% endif %}">
-                                    Ksh {{ u.balance|default:"0"|floatformat:0 }}
-                                </td>
-                                <td>
-                                    {% if u.is_active %}
-                                        <span class="badge bg-success">Active</span>
-                                    {% else %}
-                                        <span class="badge bg-secondary">Inactive</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <a href="{% url 'admin_user_detail' u.id %}" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="8" class="text-center py-4 text-muted">
-                                    <i class="fas fa-users fa-2x mb-2 d-block"></i>
-                                    No users found
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<!-- User Management Table -->
+<div class="dash-card mb-4">
+    <div class="dash-card-header">
+        <div class="dash-card-title">
+            <div class="dash-card-icon"><i class="fas fa-user-cog"></i></div>
+            <span>User Management</span>
         </div>
+        <a href="/admin/auth/user/" class="dash-badge" style="text-decoration:none;">
+            View All <i class="fas fa-external-link-alt ms-1"></i>
+        </a>
     </div>
-</div>
 
-<!-- Activity & Top Users Row -->
-<div class="row g-4">
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-fire me-2 text-teal"></i>
-                    Most Active Users
-                </h5>
-            </div>
-            <div class="card-body p-0">
-                <div class="list-group list-group-flush">
-                    {% for u in top_users %}
-                    <div class="list-group-item">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <div class="position-relative me-3">
-                                    <div class="avatar-circle" style="width: 40px; height: 40px; background: #ccfbf1; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                        <span class="fw-bold" style="color: #0d9488;">{{ forloop.counter }}</span>
-                                    </div>
-                                    {% if forloop.counter <= 3 %}
-                                    <span class="position-absolute top-0 start-100 translate-middle">
-                                        <i class="fas fa-crown text-warning"></i>
+    <div class="table-responsive mt-2">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in recent_users %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="txn-avatar income-avatar">{{ u.username|first|upper }}</div>
+                            <div>
+                                <strong>{{ u.username }}</strong>
+                                {% if u.is_superuser %}
+                                    <span class="badge ms-1"
+                                          style="background:rgba(13,148,136,0.15);
+                                                 color:var(--primary); font-size:0.65rem;">
+                                        Admin
                                     </span>
-                                    {% endif %}
-                                </div>
-                                <div>
-                                    <strong>{{ u.username }}</strong>
-                                    <small class="text-muted d-block">{{ u.total_transactions }} total transactions</small>
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <span class="badge bg-teal mb-1 d-block">{{ u.income_count }} inc</span>
-                                <span class="badge bg-danger">{{ u.expense_count }} exp</span>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="list-group-item text-center py-4 text-muted">
-                        <i class="fas fa-chart-line fa-2x mb-2 d-block"></i>
-                        No activity data
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-clock me-2 text-teal"></i>
-                    Recent Platform Activity
-                </h5>
-            </div>
-            <div class="card-body p-0">
-                <div class="timeline-list">
-                    {% for activity in recent_activities|default:"" %}
-                    <div class="timeline-item p-3 border-bottom">
-                        <div class="d-flex">
-                            <div class="timeline-icon me-3">
-                                {% if activity.type == 'income' %}
-                                <div class="income-icon"><i class="fas fa-arrow-up"></i></div>
-                                {% elif activity.type == 'expense' %}
-                                <div class="expense-icon"><i class="fas fa-arrow-down"></i></div>
-                                {% elif activity.type == 'user' %}
-                                <div class="user-icon"><i class="fas fa-user-plus"></i></div>
-                                {% else %}
-                                <div class="goal-icon"><i class="fas fa-piggy-bank"></i></div>
+                                {% elif u.is_staff %}
+                                    <span class="badge ms-1"
+                                          style="background:rgba(2,132,199,0.15);
+                                                 color:#0284c7; font-size:0.65rem;">
+                                        Staff
+                                    </span>
                                 {% endif %}
                             </div>
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between">
-                                    <strong>{{ activity.description }}</strong>
-                                    <small class="text-muted">{{ activity.time|timesince }} ago</small>
-                                </div>
-                                <small class="text-muted d-block">{{ activity.user }}</small>
-                            </div>
                         </div>
-                    </div>
-                    {% empty %}
-                    <div class="text-center py-4 text-muted">
-                        <i class="fas fa-history fa-2x mb-2 d-block"></i>
-                        No recent activity
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="card-footer text-center bg-white">
-                <a href="#" class="btn btn-sm btn-link text-teal">View All Activity</a>
-            </div>
-        </div>
+                    </td>
+                    <td class="text-muted">{{ u.email|default:"—" }}</td>
+                    <td class="text-muted">{{ u.date_joined|date:"M d, Y" }}</td>
+                    <td>
+                        {% if u.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'admin_user_detail' u.id %}"
+                           class="btn btn-sm btn-outline-primary rounded-3">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">
+                        <i class="fas fa-users fa-2x mb-2 d-block"></i>
+                        No users found
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
-<!-- Quick Actions -->
-<div class="fab-wrap">
-    <button class="fab-btn" id="fabMenuBtn">
-        <i class="fas fa-plus fab-icon"></i>
-    </button>
-    <div class="fab-menu dropdown-menu">
-        <h6 class="dropdown-header">Quick Admin Actions</h6>
-        <a class="dropdown-item fab-menu-item" href="#">
-            <div class="fab-menu-icon" style="background: #ecfdf5; color: #0d9488;">
-                <i class="fas fa-user-plus"></i>
+<!-- Most Active Users & Recent Activity -->
+<div class="row g-3">
+
+    <!-- Most active users -->
+    <div class="col-lg-6">
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <div class="dash-card-title">
+                    <div class="dash-card-icon"><i class="fas fa-trophy"></i></div>
+                    <span>Most Active Users</span>
+                </div>
             </div>
-            <div>
-                <div class="fab-menu-title">Add New User</div>
-                <div class="fab-menu-sub">Create user account</div>
+            <div class="txn-list">
+                {% for u in top_users %}
+                <div class="txn-item">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="txn-avatar expense-avatar">{{ forloop.counter }}</div>
+                        <div>
+                            <div class="txn-title">
+                                {{ u.username }}
+                                {% if forloop.counter <= 3 %}
+                                    <i class="fas fa-crown text-warning ms-1" style="font-size:0.75rem;"></i>
+                                {% endif %}
+                            </div>
+                            <div class="txn-meta">{{ u.total_transactions }} transactions</div>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge mb-1 d-block"
+                              style="background:rgba(13,148,136,0.1); color:var(--primary);">
+                            {{ u.income_count }} inc
+                        </span>
+                        <span class="badge"
+                              style="background:rgba(239,68,68,0.1); color:#dc2626;">
+                            {{ u.expense_count }} exp
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-chart-line"></i>
+                    <p class="text-muted">No activity data yet</p>
+                </div>
+                {% endfor %}
             </div>
-        </a>
-        <a class="dropdown-item fab-menu-item" href="#">
-            <div class="fab-menu-icon" style="background: #fef2f2; color: #dc2626;">
-                <i class="fas fa-chart-bar"></i>
-            </div>
-            <div>
-                <div class="fab-menu-title">Generate Report</div>
-                <div class="fab-menu-sub">Platform analytics</div>
-            </div>
-        </a>
-        <a class="dropdown-item fab-menu-item" href="{% url 'admin_dashboard' %}">
-            <div class="fab-menu-icon" style="background: #f3e8ff; color: #7c3aed;">
-                <i class="fas fa-gear"></i>
-            </div>
-            <div>
-                <div class="fab-menu-title">System Settings</div>
-                <div class="fab-menu-sub">Configure platform</div>
-            </div>
-        </a>
+        </div>
     </div>
+
+    <!-- Recent activity -->
+    <div class="col-lg-6">
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <div class="dash-card-title">
+                    <div class="dash-card-icon"><i class="fas fa-clock"></i></div>
+                    <span>Recent Platform Activity</span>
+                </div>
+            </div>
+            <div class="txn-list">
+                {% for activity in recent_activities %}
+                <div class="txn-item">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="txn-avatar
+                            {% if activity.type == 'income' %}income-avatar
+                            {% elif activity.type == 'expense' %}expense-avatar
+                            {% else %}balance-avatar{% endif %}">
+                            {% if activity.type == 'income' %}
+                                <i class="fas fa-arrow-down"></i>
+                            {% elif activity.type == 'expense' %}
+                                <i class="fas fa-arrow-up"></i>
+                            {% else %}
+                                <i class="fas fa-user-plus"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="txn-title">{{ activity.description }}</div>
+                            <div class="txn-meta">{{ activity.user }} · {{ activity.time|timesince }} ago</div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-history"></i>
+                    <p class="text-muted">No recent activity</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
 
+
 {% block scripts %}
-{{ block.super }}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Signup Chart
+document.addEventListener('DOMContentLoaded', function () {
+
+    /* ── Signup line chart ── */
     const ctx = document.getElementById('signupChart');
     if (ctx) {
         const months = JSON.parse(ctx.dataset.months || '[]');
         const counts = JSON.parse(ctx.dataset.counts || '[]');
-        
+
         new Chart(ctx.getContext('2d'), {
             type: 'line',
             data: {
@@ -412,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     label: 'New Users',
                     data: counts,
                     borderColor: '#0d9488',
-                    backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                    backgroundColor: 'rgba(13,148,136,0.08)',
                     tension: 0.4,
                     fill: true,
                     pointBackgroundColor: '#0d9488',
@@ -428,97 +376,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: '#134e4a',
-                        titleColor: '#2dd4bf',
-                        bodyColor: '#e2e8f0',
-                        padding: 10,
-                        cornerRadius: 6
+                        callbacks: {
+                            label: c => ` ${c.raw} new user${c.raw !== 1 ? 's' : ''}`
+                        }
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: { color: '#e5e7eb' },
-                        ticks: { stepSize: 1 }
+                        ticks: { stepSize: 1 },
+                        grid: { color: 'rgba(0,0,0,0.04)' }
                     },
-                    x: {
-                        grid: { display: false }
-                    }
+                    x: { grid: { display: false } }
                 }
             }
         });
     }
-    
-    // FAB Menu
-    const fabBtn = document.getElementById('fabMenuBtn');
-    const fabMenu = document.querySelector('.fab-menu');
-    
-    if (fabBtn && fabMenu) {
-        fabBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            fabMenu.classList.toggle('show');
-        });
-        
-        document.addEventListener('click', function() {
-            fabMenu.classList.remove('show');
-        });
-        
-        fabMenu.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    }
+
 });
 </script>
-
-<style>
-.timeline-icon div {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.income-icon { background: #ecfdf5; color: #0d9488; }
-.expense-icon { background: #fef2f2; color: #dc2626; }
-.user-icon { background: #e0f2fe; color: #0284c7; }
-.goal-icon { background: #f3e8ff; color: #7c3aed; }
-
-.avatar-circle {
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.stat-item {
-    margin-bottom: 1rem;
-}
-
-.quick-numbers .bg-light {
-    background: #f8fafc !important;
-}
-
-/* Timeline hover effect */
-.timeline-item:hover {
-    background: #f8fffe;
-}
-
-/* Card header enhancements */
-.card-header {
-    background: white;
-    border-bottom: 1px solid #e5e7eb;
-    padding: 1rem 1.25rem;
-}
-
-.card-header .btn-group .btn {
-    border-color: #e5e7eb;
-    color: #64748b;
-}
-
-.card-header .btn-group .btn.active {
-    background: #0d9488;
-    color: white;
-    border-color: #0d9488;
-}
-</style>
 {% endblock %}
