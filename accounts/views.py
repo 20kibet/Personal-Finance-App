@@ -15,7 +15,7 @@ def register_view(request):
             messages.success(request, 'Account created successfully!')
             if user.is_staff:
                 return redirect('admin_dashboard')
-            return redirect('dashboard:home')
+            return redirect('dashboard')  # Changed from 'dashboard:home'
     else:
         form = RegisterForm()
     return render(request, 'accounts/register.html', {'form': form})
@@ -38,10 +38,8 @@ def login_view(request):
             
             if login_type == 'admin' and (user.is_staff or user.is_superuser):
                 return redirect('admin_dashboard')
-            elif user.is_staff or user.is_superuser:
-                return redirect('dashboard:home')
             else:
-                return redirect('dashboard:home')
+                return redirect('dashboard')  # Changed from 'dashboard:home'
         else:
             messages.error(request, 'Invalid username or password.')
     

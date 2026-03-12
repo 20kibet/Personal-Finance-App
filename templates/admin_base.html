@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block sidebar %}
+<!-- Admin Sidebar -->
+<div class="sidebar">
+    <div class="brand">
+        <div class="brand-icon">
+            <i class="fas fa-crown"></i>
+        </div>
+        <div class="brand-text">
+            Admin Panel
+            <span class="brand-sub">FinanceApp</span>
+        </div>
+    </div>
+
+    <nav>
+        <div class="nav-section-label">MAIN</div>
+        <a href="{% url 'admin_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+            <i class="fas fa-dashboard"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-link" onclick="alert('User management coming soon!'); return false;">
+            <i class="fas fa-users"></i>
+            <span>Users</span>
+        </a>
+        <a href="#" class="nav-link" onclick="alert('Analytics coming soon!'); return false;">
+            <i class="fas fa-chart-line"></i>
+            <span>Analytics</span>
+        </a>
+
+        <div class="nav-section-label mt-3">PLATFORM</div>
+        <a href="#" class="nav-link" onclick="alert('System settings coming soon!'); return false;">
+            <i class="fas fa-gear"></i>
+            <span>Settings</span>
+        </a>
+        <a href="#" class="nav-link" onclick="alert('Activity logs coming soon!'); return false;">
+            <i class="fas fa-history"></i>
+            <span>Activity Logs</span>
+        </a>
+        <a href="#" class="nav-link" onclick="alert('Reports coming soon!'); return false;">
+            <i class="fas fa-file-alt"></i>
+            <span>Reports</span>
+        </a>
+
+        <div class="nav-section-label mt-3">SYSTEM</div>
+        <a href="#" class="nav-link" onclick="alert('Backup coming soon!'); return false;">
+            <i class="fas fa-database"></i>
+            <span>Backup</span>
+        </a>
+        <a href="/admin/" class="nav-link" target="_blank">
+            <i class="fas fa-shield"></i>
+            <span>Django Admin</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <hr>
+        <a href="{% url 'dashboard:home' %}" class="nav-link">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to User Dashboard</span>
+        </a>
+        <a href="{% url 'accounts:logout' %}" class="nav-link">
+            <i class="fas fa-sign-out"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block topbar %}
+<div class="topbar">
+    <div class="topbar-title">
+        <i class="fas fa-crown me-2 text-teal"></i>
+        {% block page_title %}Admin Panel{% endblock %}
+    </div>
+    <div class="topbar-right">
+        <div class="topbar-user">
+            <div class="topbar-avatar">
+                {{ request.user.username|first|upper }}
+            </div>
+            <span>{{ request.user.username }}</span>
+            {% if request.user.is_superuser %}
+                <span class="badge bg-primary ms-1">Superuser</span>
+            {% endif %}
+        </div>
+        <div class="topbar-date" id="topbar-date"></div>
+    </div>
+</div>
+{% endblock %}
