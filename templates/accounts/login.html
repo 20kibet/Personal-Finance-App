@@ -7,12 +7,367 @@
 
     <div class="row w-100 justify-content-center align-items-center g-5 auth-inner">
 
-        <!-- Left Side: Illustration -->
+        <!-- ── Left Side: Animated SVG Illustration ── -->
         <div class="col-md-6 d-none d-md-flex flex-column align-items-center justify-content-center">
             <div class="illustration-container">
-                <!-- Copy your existing SVG illustration here -->
+
                 <svg class="finance-illustration" viewBox="0 0 400 350" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Your existing SVG code -->
+                    <defs>
+                        <!-- Gradients -->
+                        <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%"   stop-color="#0d9488" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0.05"/>
+                        </linearGradient>
+                        <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.18"/>
+                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0.06"/>
+                        </linearGradient>
+                        <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%"   stop-color="#0d9488"/>
+                            <stop offset="100%" stop-color="#2dd4bf"/>
+                        </linearGradient>
+                        <linearGradient id="tealGradDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%"   stop-color="#064e3b"/>
+                            <stop offset="100%" stop-color="#0d9488"/>
+                        </linearGradient>
+                        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%"   stop-color="#fbbf24"/>
+                            <stop offset="100%" stop-color="#f59e0b"/>
+                        </linearGradient>
+                        <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%"   stop-color="#1d4ed8"/>
+                            <stop offset="100%" stop-color="#3b82f6"/>
+                        </linearGradient>
+                        <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%"   stop-color="#6d28d9"/>
+                            <stop offset="100%" stop-color="#8b5cf6"/>
+                        </linearGradient>
+                        <linearGradient id="barGrad1" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%"   stop-color="#0d9488"/>
+                            <stop offset="100%" stop-color="#5eead4"/>
+                        </linearGradient>
+                        <linearGradient id="barGrad2" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%"   stop-color="#0f766e"/>
+                            <stop offset="100%" stop-color="#2dd4bf"/>
+                        </linearGradient>
+                        <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%"   stop-color="#fbbf24"/>
+                            <stop offset="100%" stop-color="#fde68a"/>
+                        </linearGradient>
+
+                        <!-- Filters -->
+                        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.18"/>
+                        </filter>
+                        <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000" flood-opacity="0.12"/>
+                        </filter>
+                        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+                            <feGaussianBlur stdDeviation="3" result="blur"/>
+                            <feMerge>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        <filter id="tealGlow" x="-40%" y="-40%" width="180%" height="180%">
+                            <feGaussianBlur stdDeviation="4" result="blur"/>
+                            <feMerge>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+
+                        <!-- Clip paths -->
+                        <clipPath id="cardClip">
+                            <rect x="75" y="100" width="250" height="170" rx="20"/>
+                        </clipPath>
+                    </defs>
+
+                    <!-- ── Background ambient glow ── -->
+                    <circle cx="200" cy="175" r="155" fill="url(#bgGlow)"/>
+                    <circle cx="200" cy="175" r="100" fill="rgba(13,148,136,0.04)"/>
+
+                    <!-- ── Orbiting dots (ambient) ── -->
+                    <circle cx="60" cy="80" r="3" fill="#2dd4bf" opacity="0.4">
+                        <animate attributeName="opacity" values="0.2;0.7;0.2" dur="3s" repeatCount="indefinite"/>
+                        <animateTransform attributeName="transform" type="translate"
+                            values="0,0; 4,-4; 0,0" dur="4s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="340" cy="90" r="2" fill="#5eead4" opacity="0.5">
+                        <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2.5s" repeatCount="indefinite"/>
+                        <animateTransform attributeName="transform" type="translate"
+                            values="0,0; -3,5; 0,0" dur="3.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="350" cy="280" r="4" fill="#0d9488" opacity="0.3">
+                        <animate attributeName="opacity" values="0.1;0.5;0.1" dur="4s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="55" cy="260" r="2.5" fill="#fbbf24" opacity="0.5">
+                        <animate attributeName="opacity" values="0.2;0.7;0.2" dur="3.2s" repeatCount="indefinite"/>
+                    </circle>
+
+                    <!-- ── Main card base — floats up/down ── -->
+                    <g filter="url(#shadow)">
+                        <g>
+                            <animateTransform attributeName="transform" type="translate"
+                                values="0,0; 0,-6; 0,0" dur="5s" repeatCount="indefinite"
+                                calcMode="spline" keySplines="0.45 0.05 0.55 0.95; 0.45 0.05 0.55 0.95"/>
+
+                            <!-- Card body -->
+                            <rect x="75" y="100" width="250" height="170" rx="20"
+                                  fill="white" opacity="0.97"/>
+
+                            <!-- Card top strip -->
+                            <rect x="75" y="100" width="250" height="65" rx="20"
+                                  fill="url(#tealGradDark)"/>
+                            <rect x="75" y="140" width="250" height="25"
+                                  fill="url(#tealGradDark)"/>
+
+                            <!-- Card chip -->
+                            <rect x="100" y="115" width="38" height="28" rx="5"
+                                  fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                            <line x1="100" y1="125" x2="138" y2="125" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                            <line x1="100" y1="133" x2="138" y2="133" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                            <line x1="116" y1="115" x2="116" y2="143" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                            <line x1="124" y1="115" x2="124" y2="143" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+
+                            <!-- Wifi symbol on card -->
+                            <path d="M280 122 Q293 113 306 122" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                            <path d="M284 128 Q293 121 302 128" stroke="rgba(255,255,255,0.65)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                            <circle cx="293" cy="133" r="2.5" fill="rgba(255,255,255,0.8)"/>
+
+                            <!-- Card balance label -->
+                            <text x="100" y="163" font-size="7.5" fill="rgba(255,255,255,0.6)"
+                                  font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" letter-spacing="1">BALANCE</text>
+                            <text x="100" y="178" font-size="15" fill="white"
+                                  font-family="'Plus Jakarta Sans', sans-serif" font-weight="800">Ksh 48,250</text>
+
+                            <!-- Card number dots -->
+                            <circle cx="102" cy="196" r="2.5" fill="#9ca3af"/>
+                            <circle cx="109" cy="196" r="2.5" fill="#9ca3af"/>
+                            <circle cx="116" cy="196" r="2.5" fill="#9ca3af"/>
+                            <circle cx="123" cy="196" r="2.5" fill="#9ca3af"/>
+                            <text x="133" y="200" font-size="8" fill="#9ca3af"
+                                  font-family="'Plus Jakarta Sans', sans-serif">•• 4829</text>
+
+                            <!-- Card name -->
+                            <text x="100" y="218" font-size="8.5" fill="#374151"
+                                  font-family="'Plus Jakarta Sans', sans-serif" font-weight="700">ALEX MWANGI</text>
+                            <text x="270" y="218" font-size="7.5" fill="#6b7280"
+                                  font-family="'Plus Jakarta Sans', sans-serif" text-anchor="end">12/27</text>
+
+                            <!-- Mastercard-style circles -->
+                            <circle cx="290" cy="198" r="14" fill="url(#goldGrad)" opacity="0.85"/>
+                            <circle cx="304" cy="198" r="14" fill="#f59e0b" opacity="0.7"/>
+                        </g>
+                    </g>
+
+                    <!-- ── Bar chart — floats with slight delay ── -->
+                    <g>
+                        <animateTransform attributeName="transform" type="translate"
+                            values="0,0; 0,-4; 0,0" dur="5s" begin="0.8s" repeatCount="indefinite"
+                            calcMode="spline" keySplines="0.45 0.05 0.55 0.95; 0.45 0.05 0.55 0.95"/>
+
+                        <!-- Bar chart background -->
+                        <rect x="80" y="285" width="240" height="52" rx="10"
+                              fill="white" opacity="0.9" filter="url(#softShadow)"/>
+
+                        <!-- Grid lines -->
+                        <line x1="90" y1="325" x2="310" y2="325" stroke="#e5e7eb" stroke-width="0.7"/>
+                        <line x1="90" y1="313" x2="310" y2="313" stroke="#e5e7eb" stroke-width="0.7"/>
+                        <line x1="90" y1="301" x2="310" y2="301" stroke="#e5e7eb" stroke-width="0.7"/>
+
+                        <!-- Bars with grow animation -->
+                        <rect x="98"  y="325" width="16" height="0" rx="4" fill="url(#barGrad1)" opacity="0.85">
+                            <animate attributeName="height" from="0" to="28" dur="1.2s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                            <animate attributeName="y" from="325" to="297" dur="1.2s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                        </rect>
+                        <rect x="120" y="325" width="16" height="0" rx="4" fill="url(#barGrad2)" opacity="0.9">
+                            <animate attributeName="height" from="0" to="38" dur="1.2s" begin="0.1s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                            <animate attributeName="y" from="325" to="287" dur="1.2s" begin="0.1s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                        </rect>
+                        <rect x="142" y="325" width="16" height="0" rx="4" fill="url(#barGrad1)" opacity="0.75">
+                            <animate attributeName="height" from="0" to="22" dur="1.2s" begin="0.2s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                            <animate attributeName="y" from="325" to="303" dur="1.2s" begin="0.2s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                        </rect>
+                        <rect x="164" y="325" width="16" height="0" rx="4" fill="url(#barGrad2)" opacity="0.95">
+                            <animate attributeName="height" from="0" to="44" dur="1.2s" begin="0.3s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                            <animate attributeName="y" from="325" to="281" dur="1.2s" begin="0.3s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                        </rect>
+                        <rect x="186" y="325" width="16" height="0" rx="4" fill="url(#barGrad1)" opacity="0.8">
+                            <animate attributeName="height" from="0" to="30" dur="1.2s" begin="0.4s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                            <animate attributeName="y" from="325" to="295" dur="1.2s" begin="0.4s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                        </rect>
+                        <rect x="208" y="325" width="16" height="0" rx="4" fill="url(#barGrad2)" opacity="0.9">
+                            <animate attributeName="height" from="0" to="48" dur="1.2s" begin="0.5s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                            <animate attributeName="y" from="325" to="277" dur="1.2s" begin="0.5s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                        </rect>
+                        <rect x="230" y="325" width="16" height="0" rx="4" fill="url(#barGrad1)" opacity="0.85">
+                            <animate attributeName="height" from="0" to="35" dur="1.2s" begin="0.6s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                            <animate attributeName="y" from="325" to="290" dur="1.2s" begin="0.6s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                        </rect>
+                        <rect x="252" y="325" width="16" height="0" rx="4" fill="url(#barGrad2)" opacity="1">
+                            <animate attributeName="height" from="0" to="52" dur="1.2s" begin="0.7s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                            <animate attributeName="y" from="325" to="273" dur="1.2s" begin="0.7s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                        </rect>
+                        <rect x="274" y="325" width="16" height="0" rx="4" fill="url(#barGrad1)" opacity="0.75">
+                            <animate attributeName="height" from="0" to="26" dur="1.2s" begin="0.8s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                            <animate attributeName="y" from="325" to="299" dur="1.2s" begin="0.8s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+                        </rect>
+
+                        <!-- Trend line over bars -->
+                        <polyline points="106,297 128,285 150,303 172,279 194,293 216,275 238,288 260,271 282,297"
+                                  fill="none" stroke="url(#lineGrad)" stroke-width="2.5"
+                                  stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"
+                                  stroke-dasharray="220" stroke-dashoffset="220" opacity="0">
+                            <animate attributeName="stroke-dashoffset" from="220" to="0" dur="1.8s" begin="0.5s" fill="freeze"/>
+                            <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="0.5s" fill="freeze"/>
+                        </polyline>
+
+                        <!-- Trend line dots -->
+                        <circle cx="106" cy="297" r="3.5" fill="#fbbf24" filter="url(#glow)" opacity="0">
+                            <animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="1.2s" fill="freeze"/>
+                        </circle>
+                        <circle cx="172" cy="279" r="3.5" fill="#fbbf24" filter="url(#glow)" opacity="0">
+                            <animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="1.4s" fill="freeze"/>
+                        </circle>
+                        <circle cx="260" cy="271" r="4" fill="#fde68a" filter="url(#glow)" opacity="0">
+                            <animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="1.6s" fill="freeze"/>
+                            <animate attributeName="r" values="4;5.5;4" dur="2s" begin="1.9s" repeatCount="indefinite"/>
+                        </circle>
+                    </g>
+
+                    <!-- ── Floating badge: Income ── -->
+                    <g filter="url(#softShadow)">
+                        <animateTransform attributeName="transform" type="translate"
+                            values="0,0; 5,-8; 0,0" dur="6s" begin="0.3s" repeatCount="indefinite"
+                            calcMode="spline" keySplines="0.45 0.05 0.55 0.95; 0.45 0.05 0.55 0.95"/>
+
+                        <rect x="295" y="88" width="88" height="46" rx="12"
+                              fill="white" opacity="0.95"/>
+                        <rect x="295" y="88" width="88" height="46" rx="12"
+                              fill="none" stroke="rgba(13,148,136,0.2)" stroke-width="1"/>
+
+                        <!-- green dot indicator -->
+                        <circle cx="306" cy="99" r="4" fill="#10b981"/>
+                        <circle cx="306" cy="99" r="4" fill="#10b981" opacity="0.4">
+                            <animate attributeName="r" values="4;7;4" dur="2s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="0.4;0;0.4" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+
+                        <text x="315" y="103" font-size="7.5" fill="#6b7280"
+                              font-family="'Plus Jakarta Sans', sans-serif" font-weight="600">INCOME</text>
+                        <text x="305" y="122" font-size="12" fill="#059669"
+                              font-family="'Plus Jakarta Sans', sans-serif" font-weight="800">+Ksh 12K</text>
+                    </g>
+
+                    <!-- ── Floating badge: Savings ── -->
+                    <g filter="url(#softShadow)">
+                        <animateTransform attributeName="transform" type="translate"
+                            values="0,0; -5,-6; 0,0" dur="5.5s" begin="1s" repeatCount="indefinite"
+                            calcMode="spline" keySplines="0.45 0.05 0.55 0.95; 0.45 0.05 0.55 0.95"/>
+
+                        <rect x="18" y="175" width="88" height="46" rx="12"
+                              fill="white" opacity="0.95"/>
+                        <rect x="18" y="175" width="88" height="46" rx="12"
+                              fill="none" stroke="rgba(13,148,136,0.2)" stroke-width="1"/>
+
+                        <circle cx="29" cy="186" r="4" fill="url(#purpleGrad)"/>
+                        <text x="38" y="190" font-size="7.5" fill="#6b7280"
+                              font-family="'Plus Jakarta Sans', sans-serif" font-weight="600">SAVINGS</text>
+                        <text x="28" y="209" font-size="12" fill="#7c3aed"
+                              font-family="'Plus Jakarta Sans', sans-serif" font-weight="800">72% Goal</text>
+                    </g>
+
+                    <!-- ── Floating badge: Expense ── -->
+                    <g filter="url(#softShadow)" opacity="0">
+                        <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1s" fill="freeze"/>
+                        <animateTransform attributeName="transform" type="translate"
+                            values="0,0; 4,6; 0,0" dur="6.5s" begin="1.5s" repeatCount="indefinite"
+                            calcMode="spline" keySplines="0.45 0.05 0.55 0.95; 0.45 0.05 0.55 0.95"/>
+
+                        <rect x="17" y="78" width="88" height="46" rx="12"
+                              fill="white" opacity="0.95"/>
+                        <rect x="17" y="78" width="88" height="46" rx="12"
+                              fill="none" stroke="rgba(225,29,72,0.15)" stroke-width="1"/>
+
+                        <circle cx="28" cy="89" r="4" fill="#e11d48"/>
+                        <text x="37" y="93" font-size="7.5" fill="#6b7280"
+                              font-family="'Plus Jakarta Sans', sans-serif" font-weight="600">EXPENSE</text>
+                        <text x="27" y="112" font-size="12" fill="#e11d48"
+                              font-family="'Plus Jakarta Sans', sans-serif" font-weight="800">-Ksh 3.4K</text>
+                    </g>
+
+                    <!-- ── Floating coins — orbit ── -->
+                    <g>
+                        <animateTransform attributeName="transform" type="translate"
+                            values="0,0; 6,-10; 2,-5; 0,0" dur="7s" repeatCount="indefinite"
+                            calcMode="spline" keySplines="0.45 0.05 0.55 0.95; 0.45 0.05 0.55 0.95; 0.45 0.05 0.55 0.95"/>
+
+                        <!-- Coin 1 -->
+                        <circle cx="345" cy="200" r="18" fill="url(#goldGrad)" filter="url(#softShadow)"/>
+                        <circle cx="345" cy="200" r="18" fill="none" stroke="#f9a825" stroke-width="1.5" opacity="0.6"/>
+                        <circle cx="345" cy="200" r="13" fill="none" stroke="#fde68a" stroke-width="0.8" opacity="0.4"/>
+                        <text x="345" y="205" font-size="11" fill="#78350f" font-weight="800"
+                              font-family="'Plus Jakarta Sans', sans-serif" text-anchor="middle">K</text>
+                    </g>
+
+                    <g>
+                        <animateTransform attributeName="transform" type="translate"
+                            values="0,0; -4,8; 0,0" dur="5.8s" begin="1.2s" repeatCount="indefinite"
+                            calcMode="spline" keySplines="0.45 0.05 0.55 0.95; 0.45 0.05 0.55 0.95"/>
+
+                        <!-- Coin 2 (smaller) -->
+                        <circle cx="355" cy="238" r="12" fill="url(#goldGrad)" filter="url(#softShadow)" opacity="0.85"/>
+                        <circle cx="355" cy="238" r="12" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.5"/>
+                        <text x="355" y="243" font-size="7.5" fill="#92400e" font-weight="800"
+                              font-family="'Plus Jakarta Sans', sans-serif" text-anchor="middle">K</text>
+                    </g>
+
+                    <!-- ── Sparkles / stars ── -->
+                    <!-- Top right sparkle -->
+                    <g>
+                        <animateTransform attributeName="transform" type="rotate"
+                            values="0 330 65; 360 330 65" dur="8s" repeatCount="indefinite"/>
+                        <path d="M330 58 L332 65 L330 72 L328 65 Z" fill="#2dd4bf" opacity="0.6">
+                            <animate attributeName="opacity" values="0.3;0.9;0.3" dur="2s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M323 65 L330 63 L337 65 L330 67 Z" fill="#2dd4bf" opacity="0.6">
+                            <animate attributeName="opacity" values="0.3;0.9;0.3" dur="2s" repeatCount="indefinite"/>
+                        </path>
+                    </g>
+
+                    <!-- Left sparkle -->
+                    <g>
+                        <animateTransform attributeName="transform" type="rotate"
+                            values="0 50 130; 360 50 130" dur="6s" repeatCount="indefinite"/>
+                        <path d="M50 125 L51.5 130 L50 135 L48.5 130 Z" fill="#fbbf24" opacity="0.7">
+                            <animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M45 130 L50 128.5 L55 130 L50 131.5 Z" fill="#fbbf24" opacity="0.7">
+                            <animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/>
+                        </path>
+                    </g>
+
+                    <!-- Bottom sparkle -->
+                    <g>
+                        <animateTransform attributeName="transform" type="rotate"
+                            values="0 70 310; 360 70 310" dur="7s" begin="1s" repeatCount="indefinite"/>
+                        <path d="M70 305 L71.5 310 L70 315 L68.5 310 Z" fill="#5eead4" opacity="0.5">
+                            <animate attributeName="opacity" values="0.2;0.7;0.2" dur="2.2s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M65 310 L70 308.5 L75 310 L70 311.5 Z" fill="#5eead4" opacity="0.5">
+                            <animate attributeName="opacity" values="0.2;0.7;0.2" dur="2.2s" repeatCount="indefinite"/>
+                        </path>
+                    </g>
+
+                    <!-- ── Ring decorations ── -->
+                    <circle cx="200" cy="175" r="148" fill="none"
+                            stroke="rgba(45,212,191,0.06)" stroke-width="1.5" stroke-dasharray="8 6"/>
+                    <circle cx="200" cy="175" r="165" fill="none"
+                            stroke="rgba(13,148,136,0.04)" stroke-width="1" stroke-dasharray="4 10">
+                        <animateTransform attributeName="transform" type="rotate"
+                            values="0 200 175; 360 200 175" dur="40s" repeatCount="indefinite"/>
+                    </circle>
                 </svg>
 
                 <h4 class="auth-illustration-title">Smart Finance Tracking</h4>
@@ -24,8 +379,9 @@
                 </ul>
             </div>
         </div>
+        <!-- /Left Side -->
 
-        <!-- Right Side: Login Form with Tabs -->
+        <!-- ── Right Side: Login Form ── -->
         <div class="col-md-5">
             <div class="auth-card-modern">
 
@@ -122,6 +478,7 @@
 
             </div>
         </div>
+        <!-- /Right Side -->
 
     </div>
 </div>
